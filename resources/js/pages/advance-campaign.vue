@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -249,95 +249,20 @@ const handleLaunch = () => {
     </VCard>
     <!-- ── STEP 1: Define Target Audience ── -->
     <div v-show="currentStep === 0">
-      <!-- Import Method Section -->
-      <VCard rounded="lg" elevation="0" class="import-card">
-        <!-- Accordion Header -->
-        <div
-          class="import-header d-flex align-center justify-space-between pa-5"
-          @click="importMethodOpen = !importMethodOpen"
-        >
-          <div class="d-flex align-center gap-3">
-            <!-- Green dot when CSV is in map step, normal dot otherwise -->
-            <div :class="csvStep === 1 && selectedImport === 'csv' ? 'step-dot-green' : 'step-dot'" />
-            <span class="text-h6 font-weight-medium">
-              {{ csvStep === 1 && selectedImport === 'csv' ? 'Upload CSV file Selected' : 'Choose Import Method' }}
-            </span>
-            <span class="step-badge">Step 1 of 2</span>
-          </div>
-          <VIcon
-            :icon="importMethodOpen ? 'tabler-chevron-up' : 'tabler-chevron-down'"
-            size="20"
-            class="text-medium-emphasis"
-          />
-        </div>
-
-        <VDivider />
-
-        <!-- Import Options -->
-        <VExpandTransition>
-          <div v-show="importMethodOpen" class="import-body pa-5">
-            <div class="import-grid">
-              <div
-                v-for="method in importMethods"
-                :key="method.key"
-                class="import-option-card"
-                :class="{ 'import-selected': selectedImport === method.key }"
-                @click="method.key === 'lead' ? (isLookalikesModalOpen = true) : (selectedImport = method.key)"
-              >
-                <div
-                  class="import-icon-wrap mb-3"
-                  :style="{ background: method.bg }"
-                >
-                  <VIcon :icon="method.icon" size="22" :color="method.color" />
-                </div>
-                <div class="import-title font-weight-semibold mb-1">
-                  {{ method.title }}
-                </div>
-                <div class="import-description text-caption text-medium-emphasis">
-                  {{ method.description }}
-                  <a
-                    v-if="method.link"
-                    href="#"
-                    class="text-primary ms-1"
-                    @click.stop
-                  >{{ method.link }}</a>
-                </div>
-
-                <!-- Selected check -->
-                <Transition name="fade-check">
-                  <div v-if="selectedImport === method.key" class="import-check">
-                    <VIcon icon="tabler-check" size="12" color="white" />
-                  </div>
-                </Transition>
-              </div>
-            </div>
-          </div>
-        </VExpandTransition>
-      </VCard>
 
       <!-- Lookalikes Modal -->
       <VDialog v-model="isLookalikesModalOpen" max-width="840" content-class="lookalikes-dialog">
         <VCard rounded="xl" elevation="0" class="lookalikes-card">
-          <!-- Header -->
           <div class="lookalikes-header d-flex align-start justify-space-between pa-6 pb-4">
             <div>
-              <h2 class="text-h4 font-weight-semibold mb-1 " style="color: #5D596C;">Lookalikes</h2>
+              <h2 class="text-h4 font-weight-semibold mb-1">Lookalikes</h2>
               <p class="text-body-1 text-medium-emphasis mb-0">Select a lookalike list for this campaign</p>
             </div>
-            <VBtn
-              icon
-              variant="outlined"
-              size="small"
-              class="lookalikes-close-btn"
-              @click="isLookalikesModalOpen = false"
-            >
+            <VBtn icon variant="outlined" size="small" class="lookalikes-close-btn" @click="isLookalikesModalOpen = false">
               <VIcon icon="tabler-x" size="20" />
             </VBtn>
           </div>
-
           <VDivider class="mb-6" />
-
-          <!-- List Selection State -->
           <div v-if="hasLookalikeLists" class="pa-6 pt-0">
             <div class="d-flex flex-column gap-4 mb-4">
               <div
@@ -350,264 +275,312 @@ const handleLaunch = () => {
                 <div class="d-flex align-center flex-grow-1">
                   <VIcon icon="tabler-list" size="24" class="me-4 text-medium-emphasis" />
                   <div class="d-flex align-center flex-wrap gap-1">
-                    <span class="text-h6 font-weight-bold" style="color: #5D596C;">{{ list.name }}</span>
+                    <span class="text-h6 font-weight-bold">{{ list.name }}</span>
                     <span class="text-body-2 text-medium-emphasis">({{ list.description }})</span>
                   </div>
                 </div>
-                <VCheckbox
-                  v-model="selectedLookalikeList"
-                  :value="list.id"
-                  hide-details
-                  density="compact"
-                  class="lookalike-checkbox"
-                  readonly
-                />
+                <VCheckbox v-model="selectedLookalikeList" :value="list.id" hide-details density="compact" class="lookalike-checkbox" readonly />
               </div>
             </div>
-
             <div class="d-flex justify-end mb-10">
               <a href="#" class="text-primary font-weight-medium text-decoration-none">Add New</a>
             </div>
-
             <VDivider class="mb-6" />
-
             <div class="d-flex justify-end gap-4">
-              <VBtn
-                variant="flat"
-                color="#E6E6E8"
-                class="text-none px-10"
-                rounded="md"
-                size="large"
-                style="color: #A5A3AE !important;"
-                @click="isLookalikesModalOpen = false"
-              >
-                Cancel
-              </VBtn>
-              <VBtn
-                class="primary-gradient-btn text-none px-10"
-                rounded="md"
-                size="large"
-                :disabled="!selectedLookalikeList"
-                @click="handleSelectLookalikeList"
-              >
-                Select List
-              </VBtn>
+              <VBtn variant="tonal" color="secondary" class="text-none px-10" rounded="md" size="large" @click="isLookalikesModalOpen = false">Cancel</VBtn>
+              <VBtn class="primary-gradient-btn text-none px-10" rounded="md" size="large" :disabled="!selectedLookalikeList" @click="handleSelectLookalikeList">Select List</VBtn>
             </div>
           </div>
-
-          <!-- Empty state body -->
           <div v-else class="lookalikes-body d-flex flex-column align-center justify-center pa-10 text-center">
             <p class="text-h6 font-weight-bold mb-2">You don't have any leads</p>
             <p class="text-body-2 text-medium-emphasis mb-6">Create a lead list to start running campaigns</p>
-            <VBtn
-              class="primary-gradient-btn text-none px-8"
-              rounded="md"
-              size="large"
-              @click="onCreateList"
-            >
-              Create a List
-            </VBtn>
+            <VBtn class="primary-gradient-btn text-none px-8" rounded="md" size="large" @click="onCreateList">Create a List</VBtn>
           </div>
         </VCard>
       </VDialog>
 
-      <!-- LinkedIn URL Section -->
-      <VExpandTransition>
-        <VCard
-          v-if="selectedImport === 'linkedin'"
-          rounded="lg"
-          elevation="0"
-          class="import-card mt-4"
-        >
-          <!-- Section Header -->
-          <div class="import-header d-flex align-center pa-5">
-            <div class="d-flex align-center gap-3">
-              <div class="step-dot-outline" />
-              <span class="text-h6 font-weight-medium">Paste LinkedIn Search URL</span>
+      <!-- ── Vertical Step Timeline ── -->
+      <div class="vstep-layout">
+
+        <!-- ╔══════════════════════════════════════╗ -->
+        <!-- ║  SUB-STEP 1 : Choose Import Method   ║ -->
+        <!-- ╚══════════════════════════════════════╝ -->
+        <div class="vstep-row">
+          <!-- Left indicator -->
+          <div class="vstep-indicator">
+            <div :class="['vstep-dot', selectedImport ? 'vstep-dot--done' : 'vstep-dot--active']">
+              <VIcon v-if="selectedImport" icon="tabler-check" size="11" color="white" />
+              <div v-else class="vstep-dot-inner" />
             </div>
+            <!-- connector line: only when a sub-step is visible -->
+            <div v-if="selectedImport && selectedImport !== 'lead'" class="vstep-connector" />
           </div>
 
-          <VDivider />
-
-          <!-- URL Input Body -->
-          <div class="pa-5">
-            <VCard rounded="lg" elevation="0" class="linkedin-url-box pa-5">
-              <!-- Info line -->
-              <div class="d-flex align-center justify-space-between mb-4 flex-wrap gap-2">
-                <div class="text-body-2 text-medium-emphasis">
-                  Find your target audience with
-                  <a href="https://www.linkedin.com/search/results/people/" target="_blank" class="text-primary font-weight-medium">LinkedIn Search</a>
-                  or
-                  <a href="https://www.linkedin.com/sales/" target="_blank" class="text-primary font-weight-medium">Sales Navigator</a>
-                  or
-                  <a href="#" class="text-primary font-weight-medium">Post URL</a>
-                  or
-                  <a href="#" class="text-primary font-weight-medium">Group URL</a>
-                </div>
-                <a href="#" class="d-flex align-center gap-1 text-caption text-primary search-guide-link">
-                  <VIcon icon="tabler-help-circle" size="14" />
-                  Search Guide
-                </a>
-              </div>
-
-              <!-- URL input + validate -->
-              <div class="d-flex gap-3 align-start">
-                <VTextField
-                  v-model="linkedinUrl"
-                  placeholder="https://www.linkedin.com/search/results/people/?keywords="
-                  variant="outlined"
-                  density="compact"
-                  hide-details
-                  class="flex-grow-1 linkedin-url-input"
-                  @keyup.enter="validateUrl"
-                />
-                <VBtn
-                  class="primary-gradient-btn text-none validate-btn"
-                  rounded="md"
-                  :loading="isValidating"
-                  @click="validateUrl"
-                >
-                  Validate
-                </VBtn>
-              </div>
-
-              <!-- Hint -->
-              <div class="d-flex align-center gap-2 mt-3">
-                <div class="hint-dot" />
-                <span class="text-caption text-medium-emphasis">Paste the search URL directly from LinkedIn</span>
-              </div>
-            </VCard>
-          </div>
-        </VCard>
-      </VExpandTransition>
-
-      <!-- CSV Upload / Map Section -->
-      <VExpandTransition>
-        <VCard
-          v-if="selectedImport === 'csv'"
-          rounded="lg"
-          elevation="0"
-          class="import-card mt-4"
-        >
-          <!-- Section Header -->
-          <div class="import-header d-flex align-center justify-space-between pa-5">
-            <div class="d-flex align-center gap-3">
-              <div :class="csvStep === 1 ? 'step-dot-green' : 'step-dot-outline'" />
-              <span class="text-h6 font-weight-medium">Upload CSV File</span>
-              <span class="step-badge">Step 1 of 2</span>
-            </div>
-            <VIcon icon="tabler-chevron-up" size="20" class="text-medium-emphasis" />
-          </div>
-
-          <VDivider />
-
-          <!-- ── STEP 0: Drop zone ── -->
-          <div v-if="csvStep === 0" class="pa-5">
-            <input
-              id="csv-file-input"
-              type="file"
-              accept=".csv"
-              style="display: none"
-              @change="handleFileInput"
-            />
+          <!-- Right: Import Method card -->
+          <VCard rounded="lg" elevation="0" class="import-card flex-grow-1">
             <div
-              class="csv-dropzone"
-              :class="{ 'csv-dropzone-active': isDraggingOver, 'csv-dropzone-filled': csvFile }"
-              @dragover.prevent="isDraggingOver = true"
-              @dragleave="isDraggingOver = false"
-              @drop.prevent="handleFileDrop"
-              @click="triggerFileInput"
+              class="import-header d-flex align-center justify-space-between pa-5"
+              @click="importMethodOpen = !importMethodOpen"
             >
-              <VIcon icon="tabler-upload" size="32" color="primary" class="mb-3" />
-              <div v-if="!csvFile">
-                <span class="text-primary font-weight-medium" style="cursor:pointer">Drag a File or click a browse</span>
-                <p class="text-caption text-medium-emphasis mt-1 mb-0">File with up to 100 rows works best</p>
+              <div class="d-flex align-center gap-3">
+                <span class="text-h6 font-weight-medium">
+                  {{ selectedImport && selectedImport !== 'lead'
+                      ? (importMethods.find(m => m.key === selectedImport)?.title ?? 'Import') + ' Selected'
+                      : 'Choose Import Method' }}
+                </span>
+                <span class="step-badge">Step 1 of 2</span>
               </div>
-              <div v-else>
-                <span class="text-primary font-weight-medium">{{ csvFile.name }}</span>
-                <p class="text-caption text-medium-emphasis mt-1 mb-0">{{ (csvFile.size / 1024).toFixed(1) }} KB</p>
-              </div>
+              <VIcon
+                :icon="importMethodOpen ? 'tabler-chevron-up' : 'tabler-chevron-down'"
+                size="20"
+                class="text-medium-emphasis"
+              />
             </div>
-            <div class="d-flex align-center gap-2 mt-3">
-              <VIcon icon="tabler-download" size="15" color="primary" />
-              <a href="#" class="text-caption text-primary download-sample-link">Download a sample file</a>
-            </div>
-          </div>
 
-          <!-- ── STEP 1: Map Properties ── -->
-          <div v-else class="pa-5">
-            <VCard rounded="lg" elevation="0" class="map-card pa-5">
-              <!-- Map header -->
-              <div class="d-flex align-center justify-space-between mb-3">
-                <div>
-                  <p class="text-h6 font-weight-semibold mb-1">Map Properties</p>
-                  <div class="d-flex align-center gap-1">
-                    <VIcon icon="tabler-check" size="14" color="success" />
-                    <span class="text-caption text-medium-emphasis">Make sure file includes contact name and phone number</span>
+            <VDivider />
+
+            <VExpandTransition>
+              <div v-show="importMethodOpen" class="import-body pa-5">
+                <div class="import-grid">
+                  <div
+                    v-for="method in importMethods"
+                    :key="method.key"
+                    class="import-option-card"
+                    :class="{ 'import-selected': selectedImport === method.key }"
+                    @click="method.key === 'lead' ? (isLookalikesModalOpen = true) : (selectedImport = method.key)"
+                  >
+                    <div class="import-icon-wrap mb-3" :style="{ background: method.bg }">
+                      <VIcon :icon="method.icon" size="22" :color="method.color" />
+                    </div>
+                    <div class="import-title font-weight-semibold mb-1">{{ method.title }}</div>
+                    <div class="import-description text-caption text-medium-emphasis">
+                      {{ method.description }}
+                      <a v-if="method.link" href="#" class="text-primary ms-1" @click.stop>{{ method.link }}</a>
+                    </div>
+                    <Transition name="fade-check">
+                      <div v-if="selectedImport === method.key" class="import-check">
+                        <VIcon icon="tabler-check" size="12" color="white" />
+                      </div>
+                    </Transition>
                   </div>
                 </div>
-                <VBtn icon variant="text" size="small" color="error">
-                  <VIcon icon="tabler-trash" size="18" />
-                </VBtn>
               </div>
+            </VExpandTransition>
+          </VCard>
+        </div>
 
-              <VDivider class="mb-4" />
+        <!-- ╔══════════════════════════════════════╗ -->
+        <!-- ║  SUB-STEP 2 : LinkedIn Search URL    ║ -->
+        <!-- ╚══════════════════════════════════════╝ -->
+        <VExpandTransition>
+          <div v-if="selectedImport === 'linkedin'" class="vstep-row">
+            <div class="vstep-indicator vstep-indicator--sub">
+              <div class="vstep-dot vstep-dot--pending" />
+            </div>
 
-              <!-- 3-column mapping table -->
-              <div class="map-columns">
-                <!-- Contact Field -->
-                <div class="map-col">
-                  <p class="text-caption font-weight-semibold text-medium-emphasis mb-3 text-uppercase" style="letter-spacing:0.5px">Contact Field</p>
-                  <div class="d-flex flex-column gap-2">
-                    <div v-for="field in contactFields" :key="field.label" class="map-field-chip">
-                      <VIcon icon="tabler-layout-list" size="15" color="success" class="me-2" />
-                      <span class="text-body-2">{{ field.label }}</span>
-                    </div>
-                  </div>
+            <VCard rounded="lg" elevation="0" class="import-card flex-grow-1">
+              <div class="import-header d-flex align-center pa-5">
+                <div class="d-flex align-center gap-3">
+                  <span class="text-h6 font-weight-medium">Paste LinkedIn Search URL</span>
                 </div>
-
-                <!-- CSV Column -->
-                <div class="map-col">
-                  <p class="text-caption font-weight-semibold text-medium-emphasis mb-3 text-uppercase" style="letter-spacing:0.5px">CSV Column</p>
-                  <div class="d-flex flex-column gap-2">
-                    <div v-for="col in csvColumns" :key="col.label" class="map-field-chip map-field-chip--csv">
-                      <VIcon :icon="col.icon" size="15" class="me-2 text-medium-emphasis" />
-                      <span class="text-body-2 flex-grow-1">{{ col.label }}</span>
-                      <span class="map-count">({{ col.count }})</span>
+              </div>
+              <VDivider />
+              <div class="pa-5">
+                <VCard rounded="lg" elevation="0" class="linkedin-url-box pa-5">
+                  <div class="d-flex align-center justify-space-between mb-4 flex-wrap gap-2">
+                    <div class="text-body-2 text-medium-emphasis">
+                      Find your target audience with
+                      <a href="https://www.linkedin.com/search/results/people/" target="_blank" class="text-primary font-weight-medium">LinkedIn Search</a>
+                      or
+                      <a href="https://www.linkedin.com/sales/" target="_blank" class="text-primary font-weight-medium">Sales Navigator</a>
+                      or
+                      <a href="#" class="text-primary font-weight-medium">Post URL</a>
+                      or
+                      <a href="#" class="text-primary font-weight-medium">Group URL</a>
                     </div>
+                    <a href="#" class="d-flex align-center gap-1 text-caption text-primary search-guide-link">
+                      <VIcon icon="tabler-help-circle" size="14" />
+                      Search Guide
+                    </a>
                   </div>
-                </div>
-
-                <!-- Unmapped Works -->
-                <div class="map-col map-col--unmapped">
-                  <p class="text-caption font-weight-semibold text-medium-emphasis mb-3 text-uppercase" style="letter-spacing:0.5px">Unmapped Works</p>
-                  <!-- Search -->
-                  <VTextField
-                    v-model="mapSearch"
-                    placeholder="Search"
-                    prepend-inner-icon="tabler-search"
-                    variant="outlined"
-                    density="compact"
-                    hide-details
-                    class="mb-3 map-search"
-                  />
-                  <div class="d-flex flex-column gap-2">
-                    <div v-for="item in filteredUnmapped" :key="item.label" class="map-unmapped-row">
-                      <VIcon icon="tabler-list-details" size="14" class="me-2 text-medium-emphasis" />
-                      <span class="text-body-2 flex-grow-1">{{ item.label }} ({{ item.total }})</span>
-                      <span class="map-count">({{ item.count }})</span>
-                    </div>
+                  <div class="d-flex gap-3 align-start">
+                    <VTextField
+                      v-model="linkedinUrl"
+                      placeholder="https://www.linkedin.com/search/results/people/?keywords="
+                      variant="outlined"
+                      density="compact"
+                      hide-details
+                      class="flex-grow-1 linkedin-url-input"
+                      @keyup.enter="validateUrl"
+                    />
+                    <VBtn
+                      class="primary-gradient-btn text-none validate-btn"
+                      rounded="md"
+                      :loading="isValidating"
+                      @click="validateUrl"
+                    >
+                      Validate
+                    </VBtn>
                   </div>
-                  <div class="d-flex justify-end mt-3">
-                    <a href="#" class="text-caption text-primary" style="text-decoration:none; font-weight:500">Clear All Matched</a>
+                  <div class="d-flex align-center gap-2 mt-3">
+                    <div class="hint-dot" />
+                    <span class="text-caption text-medium-emphasis">Paste the search URL directly from LinkedIn</span>
                   </div>
-                </div>
+                </VCard>
               </div>
             </VCard>
           </div>
-        </VCard>
-      </VExpandTransition>
-    </div>
+        </VExpandTransition>
+
+        <!-- ╔══════════════════════════════════════╗ -->
+        <!-- ║  SUB-STEP 2 : Upload CSV File        ║ -->
+        <!-- ╚══════════════════════════════════════╝ -->
+        <VExpandTransition>
+          <div v-if="selectedImport === 'csv'" class="vstep-row">
+            <div class="vstep-indicator vstep-indicator--sub">
+              <div :class="['vstep-dot', csvStep === 1 ? 'vstep-dot--done' : 'vstep-dot--pending']">
+                <VIcon v-if="csvStep === 1" icon="tabler-check" size="11" color="white" />
+              </div>
+            </div>
+
+            <VCard rounded="lg" elevation="0" class="import-card flex-grow-1">
+              <div class="import-header d-flex align-center justify-space-between pa-5">
+                <div class="d-flex align-center gap-3">
+                  <span class="text-h6 font-weight-medium">Upload CSV File</span>
+                  <span class="step-badge">Step {{ csvStep + 1 }} of 2</span>
+                </div>
+                <VIcon icon="tabler-chevron-up" size="20" class="text-medium-emphasis" />
+              </div>
+
+              <VDivider />
+
+              <!-- CSV: Drop zone -->
+              <div v-if="csvStep === 0" class="pa-5">
+                <input id="csv-file-input" type="file" accept=".csv" style="display: none" @change="handleFileInput" />
+                <div
+                  class="csv-dropzone"
+                  :class="{ 'csv-dropzone-active': isDraggingOver, 'csv-dropzone-filled': csvFile }"
+                  @dragover.prevent="isDraggingOver = true"
+                  @dragleave="isDraggingOver = false"
+                  @drop.prevent="handleFileDrop"
+                  @click="triggerFileInput"
+                >
+                  <VIcon icon="tabler-upload" size="32" color="primary" class="mb-3" />
+                  <div v-if="!csvFile">
+                    <span class="text-primary font-weight-medium" style="cursor:pointer">Drag a File or click a browse</span>
+                    <p class="text-caption text-medium-emphasis mt-1 mb-0">File with up to 100 rows works best</p>
+                  </div>
+                  <div v-else>
+                    <span class="text-primary font-weight-medium">{{ csvFile.name }}</span>
+                    <p class="text-caption text-medium-emphasis mt-1 mb-0">{{ (csvFile.size / 1024).toFixed(1) }} KB</p>
+                  </div>
+                </div>
+                <div class="d-flex align-center gap-2 mt-3">
+                  <VIcon icon="tabler-download" size="15" color="primary" />
+                  <a href="#" class="text-caption text-primary download-sample-link">Download a sample file</a>
+                </div>
+              </div>
+
+              <!-- CSV: Map Properties -->
+              <div v-else class="pa-5">
+                <VCard rounded="lg" elevation="0" class="map-card pa-5">
+                  <div class="d-flex align-center justify-space-between mb-3">
+                    <div>
+                      <p class="text-h6 font-weight-semibold mb-1">Map Properties</p>
+                      <div class="d-flex align-center gap-1">
+                        <VIcon icon="tabler-check" size="14" color="success" />
+                        <span class="text-caption text-medium-emphasis">Make sure file includes contact name and phone number</span>
+                      </div>
+                    </div>
+                    <VBtn icon variant="text" size="small" color="error">
+                      <VIcon icon="tabler-trash" size="18" />
+                    </VBtn>
+                  </div>
+                  <VDivider class="mb-4" />
+                  <div class="map-columns">
+                    <div class="map-col">
+                      <p class="text-caption font-weight-semibold text-medium-emphasis mb-3 text-uppercase" style="letter-spacing:0.5px">Contact Field</p>
+                      <div class="d-flex flex-column gap-2">
+                        <div v-for="field in contactFields" :key="field.label" class="map-field-chip">
+                          <VIcon icon="tabler-layout-list" size="15" color="success" class="me-2" />
+                          <span class="text-body-2">{{ field.label }}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="map-col">
+                      <p class="text-caption font-weight-semibold text-medium-emphasis mb-3 text-uppercase" style="letter-spacing:0.5px">CSV Column</p>
+                      <div class="d-flex flex-column gap-2">
+                        <div v-for="col in csvColumns" :key="col.label" class="map-field-chip map-field-chip--csv">
+                          <VIcon :icon="col.icon" size="15" class="me-2 text-medium-emphasis" />
+                          <span class="text-body-2 flex-grow-1">{{ col.label }}</span>
+                          <span class="map-count">({{ col.count }})</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="map-col map-col--unmapped">
+                      <p class="text-caption font-weight-semibold text-medium-emphasis mb-3 text-uppercase" style="letter-spacing:0.5px">Unmapped Works</p>
+                      <VTextField v-model="mapSearch" placeholder="Search" prepend-inner-icon="tabler-search" variant="outlined" density="compact" hide-details class="mb-3 map-search" />
+                      <div class="d-flex flex-column gap-2">
+                        <div v-for="item in filteredUnmapped" :key="item.label" class="map-unmapped-row">
+                          <VIcon icon="tabler-list-details" size="14" class="me-2 text-medium-emphasis" />
+                          <span class="text-body-2 flex-grow-1">{{ item.label }} ({{ item.total }})</span>
+                          <span class="map-count">({{ item.count }})</span>
+                        </div>
+                      </div>
+                      <div class="d-flex justify-end mt-3">
+                        <a href="#" class="text-caption text-primary" style="text-decoration:none; font-weight:500">Clear All Matched</a>
+                      </div>
+                    </div>
+                  </div>
+                </VCard>
+              </div>
+            </VCard>
+          </div>
+        </VExpandTransition>
+
+        <!-- ╔══════════════════════════════════════╗ -->
+        <!-- ║  SUB-STEP 2 : Inbound Webhook        ║ -->
+        <!-- ╚══════════════════════════════════════╝ -->
+        <VExpandTransition>
+          <div v-if="selectedImport === 'webhook'" class="vstep-row">
+            <div class="vstep-indicator vstep-indicator--sub">
+              <div class="vstep-dot vstep-dot--pending" />
+            </div>
+            <VCard rounded="lg" elevation="0" class="import-card flex-grow-1">
+              <div class="import-header d-flex align-center pa-5">
+                <div class="d-flex align-center gap-3">
+                  <span class="text-h6 font-weight-medium">Inbound Webhook URL</span>
+                </div>
+              </div>
+              <VDivider />
+              <div class="pa-5">
+                <VCard rounded="lg" elevation="0" class="linkedin-url-box pa-5">
+                  <p class="text-body-2 text-medium-emphasis mb-4">Use this webhook URL in Zapier, n8n, or Make to push leads directly into this campaign in real time.</p>
+                  <div class="d-flex gap-3 align-start">
+                    <VTextField
+                      model-value="https://app.yourdomain.com/webhook/campaign/live"
+                      variant="outlined"
+                      density="compact"
+                      hide-details
+                      readonly
+                      class="flex-grow-1"
+                    />
+                    <VBtn class="primary-gradient-btn text-none" rounded="md" prepend-icon="tabler-copy">
+                      Copy URL
+                    </VBtn>
+                  </div>
+                  <div class="d-flex align-center gap-2 mt-3">
+                    <div class="hint-dot" />
+                    <span class="text-caption text-medium-emphasis">Send a POST request with lead data to this URL</span>
+                  </div>
+                </VCard>
+              </div>
+            </VCard>
+          </div>
+        </VExpandTransition>
+
+      </div><!-- end vstep-layout -->
+    </div><!-- end step 0 -->
 
     <!-- ── STEP 2: Sender Profiles ── -->
     <div v-show="currentStep === 1">
@@ -636,7 +609,7 @@ const handleLaunch = () => {
               <VIcon icon="tabler-brand-linkedin" color="white" size="20" />
             </div>
             <div>
-              <h3 class="text-h6 font-weight-bold mb-0" style="color: #5D596C;">LinkedIn Profile</h3>
+              <h3 class="text-h6 font-weight-bold mb-0">LinkedIn Profile</h3>
               <p class="text-body-2 text-medium-emphasis mb-0">Pick which LinkedIn profiles you want to use for this campaign.</p>
             </div>
           </div>
@@ -700,7 +673,7 @@ const handleLaunch = () => {
             <div class="col-name d-flex align-center gap-3">
               <VAvatar size="40" :image="account.avatar" />
               <div>
-                <div class="font-weight-bold text-body-1" style="color: #6F6B7D;">{{ account.name }}</div>
+                <div class="font-weight-bold text-body-1">{{ account.name }}</div>
                 <div class="text-caption text-medium-emphasis">{{ account.connections }}</div>
               </div>
             </div>
@@ -756,7 +729,7 @@ const handleLaunch = () => {
       <VCard rounded="lg" elevation="0" class="settings-card pa-8">
         <!-- Campaign Name -->
         <div class="mb-8">
-          <label class="text-h6 font-weight-bold d-block mb-2" style="color: #5D596C;">Campaign name</label>
+          <label class="text-h6 font-weight-bold d-block mb-2">Campaign name</label>
           <VTextField
             v-model="campaignName"
             variant="outlined"
@@ -767,10 +740,10 @@ const handleLaunch = () => {
         </div>
 
         <!-- Sending Window & AI Assist Row -->
-        <div class="d-flex flex-wrap gap-6 mb-8">
+        <div class="d-flex flex-wrap gap-6 mb-8 settings-two-col">
           <!-- Left: Sending Window -->
-          <div class="flex-grow-1" style="min-width: 300px;">
-            <label class="text-h6 font-weight-bold d-block mb-1" style="color: #5D596C;">Sending Window</label>
+          <div class="settings-col flex-grow-1">
+            <label class="text-h6 font-weight-bold d-block mb-1">Sending Window</label>
             <p class="text-caption text-medium-emphasis mb-4">Define when the campaign runs</p>
             
             <VCard variant="outlined" rounded="lg" class="pa-5 sending-window-box">
@@ -830,14 +803,14 @@ const handleLaunch = () => {
           </div>
 
           <!-- Right: AI Assist -->
-          <div class="flex-grow-1" style="min-width: 300px;">
+          <div class="settings-col flex-grow-1">
             <VCard variant="outlined" rounded="lg" class="pa-5 ai-assist-card h-100">
               <div class="d-flex align-center justify-space-between mb-1">
                 <div class="d-flex align-center gap-2">
                   <div class="ai-icon-wrap">
                     <VIcon icon="tabler-robot" size="18" color="white" />
                   </div>
-                  <span class="text-h6 font-weight-bold" style="color: #5D596C;">AI Assist</span>
+                  <span class="text-h6 font-weight-bold" >AI Assist</span>
                   <span class="text-caption text-medium-emphasis ms-1">Optional</span>
                 </div>
                 <VBtn color="primary" class="text-none px-6" rounded="md">Train AI</VBtn>
@@ -850,7 +823,7 @@ const handleLaunch = () => {
                   <VIcon icon="tabler-messages" size="20" class="mt-1 text-primary" />
                   <div class="flex-grow-1">
                     <div class="d-flex align-center justify-space-between">
-                      <span class="font-weight-bold" style="color: #5D596C;">Auto message after reply detected</span>
+                      <span class="font-weight-bold">Auto message after reply detected</span>
                       <VSwitch v-model="aiAutoMessage" hide-details density="compact" color="primary" />
                     </div>
                     <p class="text-caption text-medium-emphasis mb-0 mt-1">AI auto-replies to leads who message you back</p>
@@ -862,9 +835,9 @@ const handleLaunch = () => {
                   <div class="flex-grow-1">
                     <div class="d-flex align-center justify-space-between">
                       <div class="d-flex align-center gap-1">
-                        <span class="font-weight-bold" style="color: #5D596C;">Auto handle leads after</span>
+                        <span class="font-weight-bold">Auto handle leads after</span>
                         <div class="followup-count-input">{{ aiFollowupsCount }}</div>
-                        <span class="font-weight-bold" style="color: #5D596C;">Follow-ups</span>
+                        <span class="font-weight-bold">Follow-ups</span>
                       </div>
                       <VSwitch v-model="aiAutoHandle" hide-details density="compact" color="primary" />
                     </div>
@@ -881,7 +854,7 @@ const handleLaunch = () => {
           <VCard variant="flat" border rounded="lg" class="zapier-main-card">
             <div class="pa-4 px-6 zapier-header d-flex align-center gap-2">
               <VCheckbox v-model="zapierEnabled" hide-details density="compact" color="primary" />
-              <span class="font-weight-bold" style="color: #5D596C;">Select events to trigger zapier</span>
+              <span class="font-weight-bold">Select events to trigger zapier</span>
               <VIcon icon="tabler-info-circle" size="16" class="text-medium-emphasis" />
             </div>
             
@@ -896,7 +869,7 @@ const handleLaunch = () => {
                   density="compact"
                   color="primary"
                 />
-                <span class="text-body-2" style="color: #6F6B7D;">{{ event }}</span>
+                <span class="text-body-2">{{ event }}</span>
               </div>
             </div>
 
@@ -906,11 +879,11 @@ const handleLaunch = () => {
               <span class="text-caption text-medium-emphasis">Works With</span>
               <div class="d-flex align-center gap-3">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Zapier_logo.svg" height="14" alt="Zapier" />
-                <div style="width:1px; height:12px; background:#DEDEE0" />
-                <span class="font-weight-bold" style="font-size: 11px; color: #5D596C">n8n</span>
-                <div style="width:1px; height:12px; background:#DEDEE0" />
+                <div style="width:1px; height:12px; background:rgba(var(--v-theme-on-surface), 0.15)" />
+                <span class="font-weight-bold" style="font-size: 11px;">n8n</span>
+                <div style="width:1px; height:12px; background:rgba(var(--v-theme-on-surface), 0.15)" />
                 <VIcon icon="tabler-webhook" size="14" class="me-1" />
-                <span class="font-weight-semibold" style="font-size: 11px; color: #5D596C">webhooks</span>
+                <span class="font-weight-semibold" style="font-size: 11px;">webhooks</span>
               </div>
             </div>
           </VCard>
@@ -931,7 +904,7 @@ const handleLaunch = () => {
           alt="No Stats"
           class="stats-img mb-6"
         />
-        <h2 class="text-h4 font-weight-bold mb-2" style="color: #5D596C;">No Stats Yet</h2>
+        <h2 class="text-h4 font-weight-bold mb-2">No Stats Yet</h2>
         <p class="text-body-1 text-medium-emphasis mb-8">Once Campaign is launched, Statistics will be shown here.</p>
         
         <VBtn
@@ -948,7 +921,7 @@ const handleLaunch = () => {
     </div>
 
     <!-- Footer Actions -->
-    <div class="d-flex justify-end mt-6 gap-3">
+    <div class="footer-action-bar">
       <VBtn
         variant="outlined"
         rounded="md"
@@ -974,6 +947,9 @@ const handleLaunch = () => {
 
 <style scoped>
 .advance-campaign-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-block-size: calc(94dvh - 64px); /* 64px = navbar height */
   width: 100%;
   max-width: 100% !important;
 }
@@ -1070,7 +1046,7 @@ const handleLaunch = () => {
   height: 12px;
   border-radius: 50%;
   border: 2px solid #3762EE;
-  background: #fff;
+  background: rgb(var(--v-theme-surface));
   box-shadow: 0 0 0 3px rgba(55, 98, 238, 0.15);
 }
 
@@ -1272,6 +1248,86 @@ const handleLaunch = () => {
   text-decoration: underline;
 }
 
+/* ──────────────────────────────────────
+   Vertical Step Timeline (Step 1)
+────────────────────────────────────── */
+.vstep-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.vstep-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+/* Left indicator column */
+.vstep-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 22px; /* aligns dot with card title */
+  flex-shrink: 0;
+  width: 24px;
+}
+
+.vstep-indicator--sub {
+  padding-top: 22px;
+}
+
+/* Dot styles */
+.vstep-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  transition: all 0.25s ease;
+}
+
+/* Active (current, no selection yet) */
+.vstep-dot--active {
+  border: 2px solid #7367f0;
+  background-color: rgb(var(--v-theme-surface));
+}
+
+.vstep-dot-inner {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #7367f0;
+}
+
+/* Done (import method selected) */
+.vstep-dot--done {
+  background-color: #28c76f;
+  border: 2px solid #28c76f;
+  box-shadow: 0 0 0 3px rgba(40, 199, 111, 0.18);
+}
+
+/* Pending (sub-step not yet completed) */
+.vstep-dot--pending {
+  border: 2px solid rgba(var(--v-theme-on-surface), 0.2);
+  background-color: rgb(var(--v-theme-surface));
+}
+
+/* Vertical connector line between step 1 and step 2 */
+.vstep-connector {
+  width: 2px;
+  flex-grow: 1;
+  min-height: 20px;
+  margin-top: 4px;
+  background: rgba(var(--v-theme-on-surface), 0.1);
+  border-radius: 2px;
+  height:215px;
+}
+
 /* ───── Green completed dot ───── */
 .step-dot-green {
   width: 14px;
@@ -1383,21 +1439,21 @@ const handleLaunch = () => {
   align-items: center;
   justify-content: space-between;
   padding: 20px 24px;
-  border: 1px solid #DEDEE0;
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.12);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
-  background-color: #F8F7FA;
+  background-color: rgba(var(--v-theme-on-surface), 0.02);
 }
 
 .lookalike-list-item:hover {
   border-color: #7367F0;
-  background-color: #F4F3FF;
+  background-color: rgba(115, 103, 240, 0.06);
 }
 
 .lookalike-list-item.item-selected {
   border-color: #7367F0;
-  background-color: #F4F3FF;
+  background-color: rgba(115, 103, 240, 0.06);
   box-shadow: 0 0 0 1px #7367F0;
 }
 
@@ -1469,10 +1525,10 @@ const handleLaunch = () => {
 }
 
 .sender-table-header {
-  background-color: #F8F7FA;
+  background-color: rgba(var(--v-theme-on-surface), 0.03);
   border-top: 1px solid rgba(var(--v-theme-on-surface), 0.08);
   border-bottom: 1px solid rgba(var(--v-theme-on-surface), 0.08);
-  color: #5D596C;
+  color: rgba(var(--v-theme-on-surface), 0.65);
   font-size: 0.8rem;
   letter-spacing: 0.5px;
 }
@@ -1494,12 +1550,12 @@ const handleLaunch = () => {
 .col-status { width: 15%; }
 
 .limits-pill {
-  border: 1px solid #DEDEE0;
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.14);
   border-radius: 4px;
   padding: 4px 16px;
   font-size: 0.875rem;
-  color: #5D596C;
-  background-color: white;
+  color: rgba(var(--v-theme-on-surface), 0.7);
+  background-color: rgb(var(--v-theme-surface));
 }
 
 .type-icon {
@@ -1532,7 +1588,7 @@ const handleLaunch = () => {
 }
 
 .sending-window-box {
-  border: 1px solid #DEDEE0 !important;
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.14) !important;
 }
 
 .day-toggle {
@@ -1554,12 +1610,12 @@ const handleLaunch = () => {
 }
 
 .day-toggle:not(.day-active) {
-  border-color: #DEDEE0;
-  color: #A5A3AE;
+  border-color: rgba(var(--v-theme-on-surface), 0.2);
+  color: rgba(var(--v-theme-on-surface), 0.4);
 }
 
 .ai-assist-card {
-  border: 1px solid #DEDEE0 !important;
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.14) !important;
 }
 
 .ai-icon-wrap {
@@ -1575,29 +1631,29 @@ const handleLaunch = () => {
 .followup-count-input {
   width: 32px;
   height: 32px;
-  border: 1px solid #DEDEE0;
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.14);
   border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  color: #5D596C;
+  color: rgba(var(--v-theme-on-surface), 0.7);
   margin: 0 4px;
 }
 
 .zapier-main-card {
-  background-color: #F8F7FA !important;
+  background-color: rgba(var(--v-theme-on-surface), 0.02) !important;
 }
 
 .zapier-header {
-  background-color: #7367F008;
+  background-color: rgba(115, 103, 240, 0.03);
 }
 
 .zapier-events-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 16px;
-  background-color: white;
+  background-color: transparent;
 }
 
 /* ───── Stats Step ───── */
@@ -1609,5 +1665,155 @@ const handleLaunch = () => {
 
 .stats-empty-state {
   min-height: 500px;
+}
+
+/* ──────────────────────────────────────
+   Footer Action Bar – always at bottom
+────────────────────────────────────── */
+.footer-action-bar {
+  margin-top: auto;             /* pushes to bottom in flex container */
+  padding-top: 24px;
+  padding-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  border-top: 1px solid rgba(var(--v-theme-on-surface), 0.08);
+}
+
+@media (max-width: 480px) {
+  .footer-action-bar {
+    gap: 10px;
+  }
+
+  .footer-action-bar .v-btn {
+    flex: 1;
+  }
+}
+
+/* ──────────────────────────────────────
+   Settings columns – responsive
+────────────────────────────────────── */
+.settings-col {
+  min-width: min(300px, 100%);
+}
+
+/* ──────────────────────────────────────
+   Responsive Breakpoints
+────────────────────────────────────── */
+
+/* Stepper: hide labels on small screens */
+@media (max-width: 640px) {
+  .stepper-row {
+    padding: 10px 12px;
+    gap: 2px;
+  }
+
+  .stepper-step {
+    padding: 5px 8px;
+    gap: 6px;
+  }
+
+  .step-label {
+    display: none;
+  }
+
+  .step-active .step-label {
+    display: inline;
+    font-size: 0.78rem;
+  }
+}
+
+/* Sender table – horizontal scroll on mobile */
+@media (max-width: 768px) {
+  .sender-card {
+    overflow-x: auto;
+  }
+
+  .sender-table-header,
+  .sender-table-row {
+    min-width: 560px;
+  }
+
+  .sender-search-input {
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+/* Settings – stack columns on mobile */
+@media (max-width: 700px) {
+  .settings-two-col {
+    flex-direction: column;
+  }
+
+  .settings-col {
+    width: 100%;
+  }
+
+  .settings-card {
+    padding: 20px !important;
+  }
+}
+
+/* Import grid responsive */
+@media (max-width: 960px) {
+  .import-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .import-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lookalikes-header {
+    padding: 16px !important;
+  }
+
+  .lookalikes-card .pa-6 {
+    padding: 16px !important;
+  }
+}
+
+/* Map columns responsive */
+@media (max-width: 768px) {
+  .map-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .map-col--unmapped {
+    border-left: none;
+    border-top: 1px solid rgba(var(--v-theme-on-surface), 0.08);
+    padding-left: 0;
+    padding-top: 12px;
+  }
+}
+
+/* Zapier events grid – tighter on mobile */
+@media (max-width: 640px) {
+  .zapier-events-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+}
+
+@media (max-width: 400px) {
+  .zapier-events-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Footer actions */
+@media (max-width: 480px) {
+  .advance-campaign-wrapper > div:last-child {
+    flex-direction: column-reverse;
+    gap: 12px !important;
+  }
+
+  .advance-campaign-wrapper > div:last-child .v-btn {
+    width: 100%;
+  }
 }
 </style>

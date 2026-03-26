@@ -1,10 +1,10 @@
 <script setup>
-import { HorizontalNav } from '@layouts/components'
+import { HorizontalNav } from '@layouts/components';
 
 // ℹ️ Using import from `@layouts` causing build to hangup
 
 // import { useLayouts } from '@layouts'
-import { useLayoutConfigStore } from '@layouts/stores/config'
+import { useLayoutConfigStore } from '@layouts/stores/config';
 
 const props = defineProps({
   navItems: {
@@ -45,11 +45,11 @@ const configStore = useLayoutConfigStore()
     </main>
 
     <!-- 👉 Footer -->
-    <footer class="layout-footer">
+    <!-- <footer class="layout-footer">
       <div class="footer-content-container">
         <slot name="footer" />
       </div>
-    </footer>
+    </footer> -->
   </div>
 </template>
 
