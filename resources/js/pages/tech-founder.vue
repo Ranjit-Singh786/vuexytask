@@ -175,7 +175,7 @@ const campaignActions = [
             </div>
           </div>
 
-          <div class="d-flex w-100 px-6 pb-0 gap-4">
+          <div class="d-flex w-100 px-6 pb-0 gap-2">
             <div v-for="(stat, key) in [
               { label: 'New Leads', val: campaign.leads, color: '#666CFF' },
               { label: 'Invites Sent', val: campaign.invitesSent, rate: campaign.invitesSentRate, rateColor: '#E8F9F1', textRateColor: '#28C76F', color: '#A3BADD', info: true },
@@ -184,8 +184,9 @@ const campaignActions = [
               { label: 'Replies', val: campaign.replies, rate: campaign.repliesRate, rateColor: '#FFF4E8', textRateColor: '#FF9F43', color: '#E2F6EA', info: true }
             ]" :key="key" class="flex-grow-1" style="border-left: 1px solid #DEDEE0; width: 20%;">
               <div class="px-4 py-0">
-                <div class="text-subtitle-2 font-weight-bold mb-1 d-flex align-center gap-1" style="color: #5D596C;">
-                  {{ stat.label }} <VIcon v-if="stat.info" icon="tabler-info-circle-filled" size="14" style="color: #A5A3AE;" />
+                <div class="text-subtitle-2 font-weight-bold mb-1 d-flex align-center gap-1" style="color: #5D596C; font-size: 12px !important;">
+                  {{ stat.label }}
+                   <!-- <VIcon v-if="stat.info" icon="tabler-info-circle-filled" size="14" style="color: #A5A3AE;" /> -->
                 </div>
                 <div class="d-flex align-center gap-2 mb-4">
                   <span class="text-h6 font-weight-bold" style="color: #5D596C;">{{ stat.val }}</span>
@@ -324,7 +325,7 @@ const campaignActions = [
                 <div class="timeline-icon" :style="{ backgroundColor: act.color === 'primary' ? '#7367F0' : (act.color === 'secondary' ? '#7367F0' : (act.color === 'error' ? '#FF4C51' : (act.color === 'info' ? '#00CFE8' : '#FF9F43'))) }">
                   <VIcon :icon="act.icon" size="14" color="white" />
                 </div>
-                <div v-if="i < recentActivity.length - 1" class="timeline-line" />
+                <div v-if="i < recentActivity.length" :class="['timeline-line', { 'last-line': i === recentActivity.length }]" />
               </div>
               <div class="timeline-content pb-6">
                 <div class="d-flex justify-space-between mb-1">
@@ -336,9 +337,10 @@ const campaignActions = [
             </div>
           </div>
 
-          <VBtn block variant="tonal" color="primary" class="mt-4 text-none" prepend-icon="tabler-external-link">
-            Open Activity Log
-          </VBtn>
+          <div class="d-flex align-center mt-n2 px-10 logout-link" style="cursor: pointer; margin-left: -5px;">
+            <VIcon icon="tabler-external-link" size="20" color="primary" class="me-2" />
+            <span class="text-primary font-weight-bold" style="font-size: 0.8rem;">Open Activity Log</span>
+          </div>
         </VCard>
       </VCol>
     </VRow>
@@ -524,6 +526,16 @@ const campaignActions = [
   flex-grow: 1;
   background-color: #DEDEE0;
   margin: 4px 0;
+}
+
+.timeline-line.last-line {
+  background-color: transparent !important;
+  border-left: 2px solid #DEDEE0;
+  border-bottom: 2px solid #DEDEE0;
+  border-bottom-left-radius: 12px;
+  width: 24px;
+  max-height: 24px;
+  margin-left: 2px;
 }
 
 .timeline-content {

@@ -23,10 +23,17 @@ export const setupGuards = router => {
           (WARN: Don't allow executing further by return statement because next code will check for permissions)
          */
     if (to.meta.unauthenticatedOnly) {
-      if (isLoggedIn)
-        return '/'
-      else
+      if (isLoggedIn) {
+        // Redirect to Home only if the user has permission to see it
+        // Otherwise, allow them to stay on the login page to re-authenticate
+        if (canNavigate(router.resolve('/')))
+          return '/'
+        else
+          return undefined
+      }
+      else {
         return undefined
+      }
     }
     if (!canNavigate(to) && to.matched.length) {
       /* eslint-disable indent */

@@ -966,13 +966,13 @@ const handleLaunch = () => {
     </div>
 
     <!-- Footer Actions -->
-    <div v-if="currentStep !== 3" class="footer-action-bar mt-auto pa-4 px-6 d-flex align-center justify-space-between border-t" style="background: #fff; height: 80px;">
-      <div class="text-caption text-medium-emphasis mb-0" style="max-width: 420px; font-size: 13px !important; line-height: 1.4;">
+    <div v-if="currentStep !== 3 " class="footer-action-bar mt-auto pa-4 px-6 d-flex align-center justify-space-between border-t" style="background: #fff; height: 80px;">
+      <div v-if="currentStep !== 0 && currentStep !==1" class="text-caption text-medium-emphasis mb-0" style="max-width: 420px; font-size: 13px !important; line-height: 1.4;">
         If a lead answers your invite, message, or InMail, we
-        stop sending further steps automatically. <a href="#" class="text-decoration-none" style="color: #3666EE;">Learn more</a>
+        stop sending further steps automatically. <a href="#" class="text-decoration-none" style="color: #3666EE;">Learn more dfsdfsd</a>
       </div>
 
-      <div class="d-flex align-center gap-6">
+      <div class="d-flex align-center gap-6 ms-auto">
         <VBtn
           variant="text"
           class="text-none px-2"
