@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
-
+import { SenderIcon, SettingsIcon, StatsIcon, TargetIcon } from '../components/svg/Svg.jsx'
 const router = useRouter()
 
 const currentStep = ref(0)
@@ -80,8 +80,8 @@ const triggerFileInput = () => {
 }
 
 const steps = [
-  { label: 'Define Target Audience', icon: 'tabler-filter' },
-  { label: 'Sender Profiles', icon: 'tabler-user-circle' },
+  { label: 'Define Target Audience', icon: 'tabler-list-details' },
+  { label: 'Sender Profiles', icon: 'tabler-user' },
   { label: 'Settings', icon: 'tabler-settings' },
   { label: 'Stats', icon: 'tabler-chart-bar' },
 ]
@@ -97,7 +97,7 @@ const importMethods = [
   },
   {
     key: 'csv',
-    icon: 'tabler-file-spreadsheet',
+    icon: 'tabler-calendar',
     title: 'Upload CSV File',
     description: 'Upload LinkedIn profiles via CSV.',
     link: 'Download Sample',
@@ -106,7 +106,7 @@ const importMethods = [
   },
   {
     key: 'lead',
-    icon: 'tabler-users',
+    icon: 'tabler-user-search',
     title: 'Lookalike Audience',
     description: 'Upload your best profiles, let AI find their lookalikes.',
     color: '#8BA6FF',
@@ -114,11 +114,11 @@ const importMethods = [
   },
   {
     key: 'webhook',
-    icon: 'tabler-webhook',
+    icon: 'tabler-brand-linkedin',
     title: 'Inbound Webhook',
     description: 'Sync leads from zapier, n8n make in real time',
-    color: '#3762EE',
-    bg: '#EEF2FF',
+    color: '#0A66C2',
+    bg: '#EBF4FF',
   },
 ]
 
@@ -233,7 +233,10 @@ const handleLaunch = () => {
             }"
           >
             <div class="step-icon-wrap">
-              <VIcon :icon="step.icon" size="18" />
+              <TargetIcon   v-if="index === 0"       :color="index === currentStep ? '#ffffff' : index < currentStep ? '#3762EE' : '#5E5873'" />
+              <SenderIcon   v-else-if="index === 1"  :color="index === currentStep ? '#ffffff' : index < currentStep ? '#3762EE' : '#5E5873'" />
+              <SettingsIcon v-else-if="index === 2"  :color="index === currentStep ? '#ffffff' : index < currentStep ? '#3762EE' : '#5E5873'" />
+              <StatsIcon    v-else                   :color="index === currentStep ? '#ffffff' : index < currentStep ? '#3762EE' : '#5E5873'" />
             </div>
             <span class="step-label">{{ step.label }}</span>
           </div>
@@ -349,8 +352,8 @@ const handleLaunch = () => {
                     :class="{ 'import-selected': selectedImport === method.key }"
                     @click="method.key === 'lead' ? (isLookalikesModalOpen = true) : (selectedImport = method.key)"
                   >
-                    <div class="import-icon-wrap mb-3" :style="{ background: method.bg }">
-                      <VIcon :icon="method.icon" size="22" :color="method.color" />
+                    <div class="import-icon-wrap ">
+                      <VIcon :icon="method.icon" size="22" :color="selectedImport === method.key ? 'rgb(10, 102, 194)' : '#5E5873'" />
                     </div>
                     <div class="import-title font-weight-semibold mb-1">{{ method.title }}</div>
                     <div class="import-description text-caption text-medium-emphasis">
@@ -388,7 +391,8 @@ const handleLaunch = () => {
               <div class="pa-5">
                 <VCard rounded="lg" elevation="0" class="linkedin-url-box pa-5">
                   <div class="d-flex align-center justify-space-between mb-4 flex-wrap gap-2">
-                    <div class="text-body-2 text-medium-emphasis">
+                    <div class="d-flex align-center gap-2 text-body-2 text-medium-emphasis flex-wrap">
+                      <VIcon icon="tabler-brand-linkedin" size="16" color="#0A66C2" />
                       Find your target audience with
                       <a href="https://www.linkedin.com/search/results/people/" target="_blank" class="text-primary font-weight-medium">LinkedIn Search</a>
                       or
@@ -1009,6 +1013,7 @@ const handleLaunch = () => {
   background: linear-gradient(180deg, #8BA6FF 0%, #3762EE 100%);
   color: #ffffff;
   box-shadow: 0 4px 10px rgba(55, 98, 238, 0.3);
+  
 }
 
 .step-active .step-label {
@@ -1410,6 +1415,7 @@ const handleLaunch = () => {
   border-radius: 16px !important;
   overflow: hidden;
 }
+
 
 .lookalikes-card {
   border-radius: 16px !important;
