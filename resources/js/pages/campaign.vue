@@ -1,7 +1,14 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import emptyStateImg from './object-pic.js'
+import frame1 from '@images/icons/project-icons/Frame1.png';
+import frame2 from '@images/icons/project-icons/Frame2.png';
+import image1 from '@images/icons/project-icons/image1.jpg';
+import image2 from '@images/icons/project-icons/image2.jpg';
+import starPngIcon from '@images/icons/project-icons/startpng.png';
+
+import { computed, onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import emptyStateImg from './object-pic.js';
+
 
 const router = useRouter()
 
@@ -129,16 +136,7 @@ const proceedNext = () => {
 
       <!-- Right Search & Export -->
       <div class="d-flex align-center gap-4 flex-grow-1 justify-end flex-wrap">
-        <VTextField
-          v-model="searchQuery"
-          placeholder="Search..."
-          prepend-inner-icon="tabler-search"
-          density="compact"
-          variant="outlined"
-          hide-details
-          class="search-input flex-grow-1"
-        />
-        <VBtn variant="text" color="secondary" prepend-icon="tabler-file-download" class="text-none font-weight-bold px-0">
+        <VBtn variant="text" color="secondary" prepend-icon="tabler-cloud-upload" class="text-none font-weight-regular px-0">
           Export List
         </VBtn>
       </div>
@@ -175,12 +173,12 @@ const proceedNext = () => {
                 <div class="col-campaign pe-4">
                   <div class="d-flex align-center gap-1 mb-1" style="min-width: 0; width: 100%;">
                     <span
-                      class="text-body-1 font-weight-bold cursor-pointer hover-text-primary text-truncate"
+                      class="text-body-1 font-weight-bold cursor-pointer hover-text-primary text-truncate text-high-emphasis"
                       style="min-width: 0;"
                       @click="router.push({ name: 'tech-founder' })"
                     >{{ c.name }}</span>
                     <div class="d-flex gap-1 flex-shrink-0">
-                      <VChip v-for="chn in c.channels" :key="chn" size="x-small" variant="tonal" color="primary" class="font-weight-bold">{{ chn }}</VChip>
+                      <VChip v-for="chn in c.channels" :key="chn" size="x-small" variant="flat" class="font-weight-medium custom-channel-chip">{{ chn }}</VChip>
                     </div>
                   </div>
                   <div class="text-caption text-medium-emphasis">Created On: {{ c.created }}</div>
@@ -190,9 +188,14 @@ const proceedNext = () => {
                 <div class="col-crm">
                   <template v-if="c.crm === 'Synced'">
                     <div class="d-flex flex-column">
-                      <div class="d-flex align-center gap-1 text-error">
-                        <VIcon icon="tabler-sun" size="14" />
-                        <span class="font-weight-bold text-body-2">Synced</span>
+                      <div class="d-flex align-center gap-1" style="color: #FF9F43; flex-shrink: 0;">
+                        <VImg
+                          :src="starPngIcon"
+                          width="16"
+                          height="16"
+                          class="flex-shrink-0"
+                        />
+                        <span class="font-weight-bold text-body-2 text-no-wrap" style="color: rgba(var(--v-theme-on-surface), 0.85);">Synced</span>
                       </div>
                       <span class="text-caption text-medium-emphasis">{{ c.crmTime }}</span>
                     </div>
@@ -205,43 +208,51 @@ const proceedNext = () => {
                 <!-- Stats Columns -->
                 <div class="col-invites">
                   <div class="font-weight-bold text-body-2">{{ c.invites }}</div>
-                  <div class="text-caption text-medium-emphasis">{{ c.accepted }} Accepted</div>
+                  <div class="text-caption text-medium-emphasis" style="font-size: 12px !important;">{{ c.accepted }} Accepted</div>
                 </div>
 
                 <div class="col-replies">
-                  <div class="font-weight-bold text-body-2">{{ c.replies }}</div>
-                  <div class="text-caption text-medium-emphasis">{{ c.replyRate }} Received</div>
+                  <div class="font-weight-bold text-body-2" style="font-size: 12px !important;">{{ c.replies }}</div>
+                  <div class="text-caption text-medium-emphasis" style="font-size: 12px !important;">{{ c.replyRate }} Received</div>
                 </div>
 
                 <div class="col-email">
-                  <div class="font-weight-bold text-body-2">{{ c.emailSent }}</div>
-                  <div class="text-caption text-medium-emphasis">{{ c.emailOpen }} Mail Opened</div>
+                  <div class="font-weight-bold text-body-2" style="font-size: 11px !important;">{{ c.emailSent }}</div>
+                  <div class="text-caption text-medium-emphasis" style="font-size: 12px !important;">{{ c.emailOpen }} Mail Opened</div>
                 </div>
 
                 <!-- Sender Avatars -->
                 <div class="col-sender">
-                  <div class="avatar-group">
-                    <VAvatar v-for="(img, idx) in c.sender" :key="idx" size="28" :image="img" class="avatar-border" />
+                  <div class="avatar-group" style="flex-shrink: 0;">
+                    <VAvatar size="28" class="avatar-border flex-shrink-0">
+                      <VImg :src="image1" alt="avatar" />
+                    </VAvatar>
+                    <VAvatar size="28" class="avatar-border flex-shrink-0">
+                      <VImg :src="image2" alt="avatar" />
+                    </VAvatar>
+                    <!-- <VAvatar v-for="(img, idx) in c.sender" :key="idx" size="28" class="avatar-border flex-shrink-0">
+                      <VImg :src="img" alt="avatar" />
+                    </VAvatar> -->
                   </div>
                 </div>
 
                 <!-- Status Chip -->
                 <div class="col-status">
-                  <div class="status-pill d-flex align-center gap-2">
-                    <div class="status-indicator-wrap">
-                      <VIcon icon="tabler-pause" v-if="c.status === 'Paused'" size="10" />
+                  <div class="status-pill d-flex align-center gap-1" :class="c.status === 'Running' ? 'running-pill' : (c.status === 'Paused' ? 'paused-pill' : '')">
+                    <div class="status-indicator-wrap me-1">
+                      <VIcon icon="tabler-player-pause-filled" color="secondary" v-if="c.status === 'Paused'" size="10" />
                       <div v-else class="running-dots d-flex gap-1">
                         <div class="dot" />
                         <div class="dot" />
                       </div>
                     </div>
-                    <span class="text-caption font-weight-bold text-success">{{ c.status }}</span>
+                    <span class="text-caption font-weight-bold" :class="c.status === 'Running' ? 'text-success' : 'text-secondary'" style="font-size: 12px !important;">{{ c.status }}</span>
                   </div>
                 </div>
 
                 <!-- Daily Limit -->
                 <div class="col-limit">
-                  <div class="limit-box text-caption font-weight-bold">
+                  <div class="limit-box text-caption font-weight-bold" style="font-size: 12px !important;">
                     {{ c.limit }}
                   </div>
                 </div>
@@ -318,27 +329,8 @@ const proceedNext = () => {
               </div>
             </div>
 
-            <div class="workflow-graphic advanced-graphic d-none d-sm-block">
-              <div class="wf-header" />
-              <div class="d-flex gap-2">
-                <div class="wf-box" />
-                <div class="d-flex flex-column gap-1">
-                  <div class="wf-line" />
-                  <div class="wf-line" />
-                  <div class="wf-stats d-flex gap-1 mt-1">
-                    <div class="wf-bar" style="height: 10px" />
-                    <div class="wf-bar" style="height: 14px" />
-                    <div class="wf-bar" style="height: 8px" />
-                  </div>
-                </div>
-                <div class="wf-card-float">
-                  <div class="wf-header-mini" />
-                  <div class="wf-row d-flex gap-1 p-1">
-                    <div class="wf-sq" />
-                    <div class="wf-sq w-50" />
-                  </div>
-                </div>
-              </div>
+            <div class="workflow-graphic-img d-none d-sm-block">
+              <VImg :src="frame2" width="100" />
             </div>
           </div>
 
@@ -367,24 +359,8 @@ const proceedNext = () => {
               </div>
             </div>
 
-            <div class="workflow-graphic standard-graphic d-none d-sm-block">
-              <div class="wf-header" />
-              <div class="d-flex gap-2 w-100">
-                <div class="wf-box w-50 d-flex flex-column gap-2 justify-end pb-2">
-                  <div class="wf-stats d-flex gap-1 ms-2">
-                    <div class="wf-bar" style="height: 8px" />
-                    <div class="wf-bar" style="height: 12px" />
-                    <div class="wf-bar" style="height: 6px" />
-                  </div>
-                </div>
-                <div class="d-flex flex-column gap-1 w-50">
-                  <div class="wf-line w-100" />
-                  <div class="wf-line w-100" />
-                  <div class="wf-line w-100" />
-                  <div class="wf-line w-100" />
-                  <div class="wf-line w-100" />
-                </div>
-              </div>
+            <div class="workflow-graphic-img d-none d-sm-block">
+              <VImg :src="frame1" width="100" />
             </div>
           </div>
         </div>
@@ -423,19 +399,20 @@ const proceedNext = () => {
 }
 
 /* ──────────────────────────────────────
-   Gradient Button
+   Primary Button
 ────────────────────────────────────── */
 .primary-gradient-btn {
-  background: linear-gradient(180deg, #8BA6FF 0%, #3762EE 100%) !important;
+  background: #666CFF !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 14px rgba(55, 98, 238, 0.3) !important;
+  box-shadow: 0 4px 14px rgba(102, 108, 255, 0.3) !important;
   border: none !important;
   transition: all 0.3s ease;
 }
 
 .primary-gradient-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(55, 98, 238, 0.45) !important;
+  box-shadow: 0 6px 18px rgba(102, 108, 255, 0.45) !important;
+  background: #5a5fe0 !important;
 }
 
 /* ──────────────────────────────────────
@@ -461,7 +438,8 @@ const proceedNext = () => {
 }
 
 .table-min-width {
-  min-width: 820px;
+  min-width: 800px;
+  width: 100%;
 }
 
 /* ──────────────────────────────────────
@@ -501,14 +479,14 @@ const proceedNext = () => {
 /* ──────────────────────────────────────
    Column Widths
 ────────────────────────────────────── */
-.col-campaign { width: 22%; flex-shrink: 0; }
-.col-crm { width: 12%; flex-shrink: 0; }
-.col-invites { width: 11%; flex-shrink: 0; }
-.col-replies { width: 11%; flex-shrink: 0; }
-.col-email { width: 11%; flex-shrink: 0; }
-.col-sender { width: 10%; flex-shrink: 0; }
-.col-status { width: 11%; flex-shrink: 0; }
-.col-limit { width: 12%; flex-shrink: 0; }
+.col-campaign { width: 21%; flex-shrink: 1; padding-right: 8px; min-width: 170px; }
+.col-crm { width: 11%; flex-shrink: 1; padding-right: 8px; min-width: 90px; }
+.col-invites { width: 11%; flex-shrink: 1; padding-right: 8px; border-right: none; min-width: 95px; }
+.col-replies { width: 11%; flex-shrink: 1; padding-right: 8px; min-width: 95px; }
+.col-email { width: 11%; flex-shrink: 1; padding-right: 8px; min-width: 95px; }
+.col-sender { width: 9%; flex-shrink: 1; padding-right: 8px; min-width: 70px; }
+.col-status { width: 11%; flex-shrink: 1; padding-right: 8px; min-width: 90px; }
+.col-limit { width: 12%; flex-shrink: 1; min-width: 110px; }
 
 /* ──────────────────────────────────────
    Avatar Group
@@ -536,6 +514,16 @@ const proceedNext = () => {
   padding: 4px 10px;
   width: fit-content;
   border: 1px solid rgba(40, 199, 111, 0.2);
+}
+
+.paused-pill {
+  background-color: rgba(var(--v-theme-on-surface), 0.06);
+  border-color: rgba(var(--v-theme-on-surface), 0.12);
+}
+
+.running-pill {
+  background-color: #E5F8EE !important;
+  border-color: rgba(40, 199, 111, 0.2) !important;
 }
 
 .status-indicator-wrap {
@@ -596,6 +584,17 @@ const proceedNext = () => {
 
 .search-input {
   max-width: 500px;
+}
+
+/* ──────────────────────────────────────
+   Custom Chips / Pills
+────────────────────────────────────── */
+.custom-channel-chip {
+  background-color: rgba(102, 108, 255, 0.08) !important;
+  color: #666CFF !important;
+  font-size: 10px !important;
+  height: 20px !important;
+  padding: 0 6px !important;
 }
 
 /* ──────────────────────────────────────

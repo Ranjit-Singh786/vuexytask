@@ -1,5 +1,9 @@
 <script setup>
+import image1 from '@images/icons/project-icons/image1.jpg'
+import image2 from '@images/icons/project-icons/image2.jpg'
+import image3 from '@images/icons/project-icons/image3.jpg'
 import { ref } from 'vue'
+import { SenderIcon, SettingsIcon, StatsIcon, TargetIcon, crmconnectedicon, runningicon } from '../components/svg/Svg.jsx'
 
 const campaign = ref({
   name: 'Tech Founder',
@@ -54,12 +58,59 @@ const campaignActions = [
 
 <template>
   <div class="tech-founder-wrapper">
-    <!-- Breadcrumbs -->
-    <div class="d-flex align-center gap-2 mb-6 breadcrumbs">
-      <span class="text-primary cursor-pointer font-weight-medium">Campaign</span>
-      <VIcon icon="tabler-chevron-right" size="14" class="text-medium-emphasis" />
-      <span class="text-medium-emphasis font-weight-medium">Tech Founder</span>
+    <VCard rounded="lg" elevation="0" border class="pa-4 mb-6">
+      <div class="d-flex align-center justify-start gap-12 ps-4">
+        <div class="d-flex align-center gap-2">
+          <TargetIcon style="width: 32px; height: 32px;" />
+          <span class="text-subtitle-2 font-weight-medium" style="color: #5D596C;">Define Target Audience</span>
+          <VIcon icon="tabler-chevron-right" size="18" class="text-medium-emphasis ms-4" />
+        </div>
+        <div class="d-flex align-center gap-2">
+          <SenderIcon style="width: 32px; height: 32px;" />
+          <span class="text-subtitle-2 font-weight-medium" style="color: #5D596C;">Sender Profiles</span>
+          <VIcon icon="tabler-chevron-right" size="18" class="text-medium-emphasis ms-4" />
+        </div>
+        <div class="d-flex align-center gap-2">
+          <SettingsIcon style="width: 32px; height: 32px;" />
+          <span class="text-subtitle-2 font-weight-medium" style="color: #5D596C;">Settings</span>
+          <VIcon icon="tabler-chevron-right" size="18" class="text-medium-emphasis ms-4" />
+        </div>
+        <div class="d-flex align-center gap-2">
+          <StatsIcon style="width: 32px; height: 32px;" />
+          <span class="text-subtitle-2 font-weight-bold" style="color: #3666EE;">Stats</span>
+        </div>
+      </div>
+    </VCard>
+
+    <!-- Filter Bar -->
+    <div class="d-flex align-center gap-4 mb-3">
+      <VSelect
+        density="compact"
+        variant="outlined"
+        placeholder="All"
+        rounded="lg"
+        style="max-width: 140px; background: white;"
+        hide-details
+        class="custom-filter-select"
+      >
+        <template v-slot:selection="{ item }">
+          <span class="font-weight-bold" style="color: #5E5873;">{{ item.title }}</span>
+        </template>
+      </VSelect>
+      <VTextField
+        density="compact"
+        variant="outlined"
+        placeholder="Search"
+        prepend-inner-icon="tabler-search"
+        rounded="lg"
+        style="max-width: 250px; background: white;"
+        hide-details
+        class="custom-search-field"
+      />
     </div>
+
+    <!-- Breadcrumbs -->
+   
 
     <!-- Main Grid -->
     <VRow class="flex-grow-1">
@@ -73,7 +124,7 @@ const campaignActions = [
                 <VIcon icon="tabler-speakerphone" color="primary" />
               </div>
               <div>
-                <h2 class="text-h5 font-weight-bold" style="color: #5D596C;">{{ campaign.name }}</h2>
+                <!-- No Title needed here as per request -->
                 <div class="d-flex gap-2">
                   <VChip size="x-small" label color="primary" variant="tonal" class="font-weight-bold">LinkedIn</VChip>
                   <VChip size="x-small" label color="secondary" variant="tonal" class="font-weight-bold">Email</VChip>
@@ -81,8 +132,11 @@ const campaignActions = [
               </div>
             </div>
             <div class="d-flex align-center gap-2">
-              <VChip color="success" size="small" label class="px-4 font-weight-bold">
-                <VIcon icon="tabler-bolt" size="14" class="me-1" /> Running
+              <VChip color="success" size="small" label class="px-3" style="height: 24px;">
+                <div class="d-flex align-center">
+                  <runningicon class="me-1" />
+                  <span style="font-size: 12px; font-weight: 600; line-height: 1;">Running</span>
+                </div>
               </VChip>
               <VBtn icon variant="text" size="small" color="secondary"><VIcon icon="tabler-pause" size="18" /></VBtn>
               <VBtn icon variant="text" size="small" color="secondary"><VIcon icon="tabler-edit" size="18" /></VBtn>
@@ -97,8 +151,11 @@ const campaignActions = [
               <div class="d-flex align-center gap-4">
                 <span class="text-caption text-medium-emphasis">Created: <b>{{ campaign.created }}</b></span>
                 <VDivider vertical length="12" />
-                <VChip size="x-small" color="success" label class="font-weight-bold crm-tag">
-                   <VIcon icon="tabler-sun" size="12" class="me-1" /> CRM Connected
+                <VChip size="x-small" color="success" label class="crm-tag px-2" style="height: 22px;">
+                   <div class="d-flex align-center">
+                     <crmconnectedicon class="me-1" />
+                     <span style="font-size: 12px; font-weight: 600; line-height: 1;">CRM Connected</span>
+                   </div>
                 </VChip>
               </div>
               <span class="text-caption font-weight-bold" style="color: #5D596C;">{{ campaign.prospectsProcessed }} / {{ campaign.prospectsTotal }} prospects processed</span>
@@ -107,33 +164,39 @@ const campaignActions = [
         </VCard>
 
         <!-- Stats Overview -->
-        <VCard rounded="lg" elevation="0" class="mb-6 pa-6">
-          <div class="d-flex align-center justify-space-between mb-6">
-            <h3 class="text-h6 font-weight-bold" style="color: #5D596C;">Campaign Overview</h3>
-            <div class="toggle-group d-flex">
-              <div class="toggle-btn active">LinkedIn</div>
-              <div class="toggle-btn">Email</div>
+        <VCard rounded="lg" elevation="0" border class="mb-6 overflow-hidden">
+          <div class="pa-6 pb-0">
+            <div class="d-flex align-center justify-space-between mb-8">
+              <h3 class="text-h6 font-weight-bold" style="color: #5D596C;">Campaign Overview</h3>
+              <div class="toggle-group d-flex" style="border: 1px solid #DEDEE0; border-radius: 6px; overflow: hidden;">
+                <div class="toggle-btn px-4 py-1 font-weight-medium active" style="font-size: 0.8rem; background: #F8F7FA; border-right: 1px solid #DEDEE0; cursor: pointer;">LinkedIn</div>
+                <div class="toggle-btn px-4 py-1 font-weight-medium" style="font-size: 0.8rem; background: white; cursor: pointer; color: #A5A3AE;">Email</div>
+              </div>
             </div>
           </div>
 
-          <VRow class="stats-row">
-            <VCol v-for="(stat, key) in [
-              { label: 'New Leads', val: campaign.leads, color: '#7367F0' },
-              { label: 'Invites Sent', val: campaign.invitesSent, rate: campaign.invitesSentRate, color: '#9AA7C1' },
-              { label: 'Invites Accepted', val: campaign.invitesAccepted, rate: campaign.invitesAcceptedRate, color: '#CFE6D9' },
-              { label: 'Messages Sent', val: campaign.messagesSent, rate: campaign.messagesSentRate, color: '#E1F2D1' },
-              { label: 'Replies', val: campaign.replies, rate: campaign.repliesRate, color: '#E1F2D1' }
-            ]" :key="key" class="text-center px-1">
-              <div class="text-caption font-weight-medium text-medium-emphasis mb-1 d-flex align-center justify-center gap-1">
-                {{ stat.label }} <VIcon v-if="stat.rate" icon="tabler-info-circle" size="12" />
+          <div class="d-flex w-100 px-6 pb-0 gap-4">
+            <div v-for="(stat, key) in [
+              { label: 'New Leads', val: campaign.leads, color: '#666CFF' },
+              { label: 'Invites Sent', val: campaign.invitesSent, rate: campaign.invitesSentRate, rateColor: '#E8F9F1', textRateColor: '#28C76F', color: '#A3BADD', info: true },
+              { label: 'Invites Accepted', val: campaign.invitesAccepted, rate: campaign.invitesAcceptedRate, rateColor: '#FFF4E8', textRateColor: '#FF9F43', color: '#CFEFE1', info: true },
+              { label: 'Messages Sent', val: campaign.messagesSent, rate: campaign.messagesSentRate, rateColor: '#E8F9F1', textRateColor: '#28C76F', color: '#E4F8D2' },
+              { label: 'Replies', val: campaign.replies, rate: campaign.repliesRate, rateColor: '#FFF4E8', textRateColor: '#FF9F43', color: '#E2F6EA', info: true }
+            ]" :key="key" class="flex-grow-1" style="border-left: 1px solid #DEDEE0; width: 20%;">
+              <div class="px-4 py-0">
+                <div class="text-subtitle-2 font-weight-bold mb-1 d-flex align-center gap-1" style="color: #5D596C;">
+                  {{ stat.label }} <VIcon v-if="stat.info" icon="tabler-info-circle-filled" size="14" style="color: #A5A3AE;" />
+                </div>
+                <div class="d-flex align-center gap-2 mb-4">
+                  <span class="text-h6 font-weight-bold" style="color: #5D596C;">{{ stat.val }}</span>
+                  <VChip v-if="stat.rate" size="x-small" label class="font-weight-bold border-0" :style="{ background: stat.rateColor, color: stat.textRateColor }">
+                    {{ stat.rate }}
+                  </VChip>
+                </div>
               </div>
-              <div class="d-flex align-center justify-center gap-1 mb-3">
-                <span class="text-h6 font-weight-bold" style="color: #5D596C;">{{ stat.val }}</span>
-                <span v-if="stat.rate" class="text-caption font-weight-bold text-success">{{ stat.rate }}</span>
-              </div>
-              <div class="stat-bar" :style="{ background: stat.color, height: '80px', borderRadius: '4px' }" />
-            </VCol>
-          </VRow>
+              <div class="stat-bar-new" :style="{ background: stat.color, height: '100px', borderTopRightRadius: '12px' }" />
+            </div>
+          </div>
         </VCard>
 
         <VRow>
@@ -158,13 +221,19 @@ const campaignActions = [
                 </div>
               </div>
 
-              <div class="mt-6 pt-4 border-top">
+              <div class="mt-6 pa-3 rounded-lg d-flex align-center justify-start w-100" style="background-color: #EEF2FF; border: 1px solid #D9E2FF;">
                 <div class="d-flex align-center gap-2">
-                  <span class="text-body-2 font-weight-bold" style="color: #5D596C;">Team:</span>
-                  <div class="avatar-group">
-                    <VAvatar size="28" image="https://i.pravatar.cc/150?u=1" class="border" />
-                    <VAvatar size="28" image="https://i.pravatar.cc/150?u=2" class="border" />
-                    <VAvatar size="28" image="https://i.pravatar.cc/150?u=3" class="border" />
+                  <span class="text-body-2 font-weight-bold" style="color: #434050; font-size: 1.1rem !important;">Team:</span>
+                  <div class="avatar-group d-flex align-center ms-1">
+                    <VAvatar size="36" style="border: 2px solid white !important;">
+                      <VImg :src="image1" alt="image1" />
+                    </VAvatar>
+                    <VAvatar size="36" style="border: 2px solid white !important; margin-left: -12px;">
+                      <VImg :src="image2" alt="image2" />
+                    </VAvatar>
+                    <VAvatar size="36" style="border: 2px solid white !important; margin-left: -12px;">
+                      <VImg :src="image3" alt="image3" />
+                    </VAvatar>
                   </div>
                 </div>
               </div>
@@ -277,6 +346,31 @@ const campaignActions = [
 </template>
 
 <style scoped>
+/* Custom Filter Styles */
+.custom-filter-select :deep(.v-field__input),
+.custom-filter-select :deep(.v-placeholder) {
+  font-weight: 700 !important;
+  color: #5E5873 !important;
+  opacity: 1 !important;
+}
+
+.custom-filter-select :deep(.v-icon) {
+  color: #5E5873 !important;
+  opacity: 1 !important;
+}
+
+.custom-search-field :deep(.v-field__input),
+.custom-search-field :deep(.v-placeholder) {
+  font-weight: 700 !important;
+  color: #5E5873 !important;
+  opacity: 1 !important;
+}
+
+.custom-search-field :deep(.v-field__prepend-inner) .v-icon {
+  color: #5E5873 !important;
+  opacity: 0.8 !important;
+}
+
 .tech-founder-wrapper {
   width: 100%;
   max-width: 100% !important;

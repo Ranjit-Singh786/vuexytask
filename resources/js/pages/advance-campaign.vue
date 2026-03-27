@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { SenderIcon, SettingsIcon, StatsIcon, TargetIcon } from '../components/svg/Svg.jsx'
+import { Headlineicon, ListsIcon, Nostatsicon, ProfileIcon, SenderIcon, SettingsIcon, StatsIcon, TargetIcon, UploadCsvIcon, aiassisticon, companynameicon, contactFieldsicon, inboundwebhook, launchcompaignicon, linkedinprofileicon, n8nicon, postionicon, previousbuttonicon, unmappedworkicon, zapiericon } from '../components/svg/Svg.jsx'
 const router = useRouter()
 
 const currentStep = ref(0)
@@ -35,21 +35,21 @@ const handleSelectLookalikeList = () => {
 }
 
 const contactFields = [
-  { label: 'Full name', icon: 'tabler-list' },
-  { label: 'First name', icon: 'tabler-list' },
-  { label: 'Last name', icon: 'tabler-list' },
-  { label: 'Company Name', icon: 'tabler-list' },
-  { label: 'Position', icon: 'tabler-list' },
-  { label: 'Headline', icon: 'tabler-list' },
+  { label: 'Full name', icon: contactFieldsicon },
+  { label: 'First name', icon: contactFieldsicon },
+  { label: 'Last name', icon: contactFieldsicon },
+  { label: 'Company Name', icon: contactFieldsicon },
+  { label: 'Position', icon: contactFieldsicon },
+  { label: 'Headline', icon: contactFieldsicon },
 ]
 
 const csvColumns = [
-  { label: 'Full name', count: 35, icon: 'tabler-user' },
-  { label: 'First name', count: 3, icon: 'tabler-user' },
-  { label: 'Last name', count: 12, icon: 'tabler-user' },
-  { label: 'Company Name', count: 36, icon: 'tabler-building' },
-  { label: 'Position', count: 25, icon: 'tabler-briefcase' },
-  { label: 'Headline', count: 25, icon: 'tabler-news' },
+  { label: 'Full name', count: 35, icon: ProfileIcon },
+  { label: 'First name', count: 3, icon: ProfileIcon },
+  { label: 'Last name', count: 12, icon: ProfileIcon },
+  { label: 'Company Name', count: 36, icon: companynameicon },
+  { label: 'Position', count: 25, icon: postionicon },
+  { label: 'Headline', count: 25, icon: Headlineicon },
 ]
 
 const unmappedFields = [
@@ -67,12 +67,20 @@ const filteredUnmapped = computed(() =>
 const handleFileDrop = (e) => {
   isDraggingOver.value = false
   const file = e.dataTransfer?.files?.[0]
-  if (file) csvFile.value = file
+  if (file) {
+    csvFile.value = file
+    csvStep.value = 1
+    importMethodOpen.value = false
+  }
 }
 
 const handleFileInput = (e) => {
   const file = e.target?.files?.[0]
-  if (file) csvFile.value = file
+  if (file) {
+    csvFile.value = file
+    csvStep.value = 1
+    importMethodOpen.value = false
+  }
 }
 
 const triggerFileInput = () => {
@@ -86,10 +94,11 @@ const steps = [
   { label: 'Stats', icon: 'tabler-chart-bar' },
 ]
 
+
 const importMethods = [
   {
     key: 'linkedin',
-    icon: 'tabler-brand-linkedin',
+    icon: inboundwebhook,
     title: 'LinkedIn Search',
     description: '(Basic, Sales Nav, Post, Group or Event URL)',
     color: '#0A66C2',
@@ -97,7 +106,7 @@ const importMethods = [
   },
   {
     key: 'csv',
-    icon: 'tabler-calendar',
+    icon: UploadCsvIcon,
     title: 'Upload CSV File',
     description: 'Upload LinkedIn profiles via CSV.',
     link: 'Download Sample',
@@ -106,7 +115,7 @@ const importMethods = [
   },
   {
     key: 'lead',
-    icon: 'tabler-user-search',
+    icon: ListsIcon,
     title: 'Lookalike Audience',
     description: 'Upload your best profiles, let AI find their lookalikes.',
     color: '#8BA6FF',
@@ -114,7 +123,7 @@ const importMethods = [
   },
   {
     key: 'webhook',
-    icon: 'tabler-brand-linkedin',
+    icon: inboundwebhook,
     title: 'Inbound Webhook',
     description: 'Sync leads from zapier, n8n make in real time',
     color: '#0A66C2',
@@ -171,6 +180,7 @@ const senderAccounts = [
 
 // Settings Step Data
 const campaignName = ref('New Outreach Campaign')
+const availableDays = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
 const selectedSchedule = ref('USA Outreach Time')
 const selectedDays = ref(['MON', 'TUE', 'WED', 'THU', 'SAT'])
 const startTime = ref('11:30 AM')
@@ -215,7 +225,7 @@ const handleLaunch = () => {
   localStorage.setItem('campaigns_list', JSON.stringify(existing))
 
   // Redirect to dashboard
-  router.push({ name: 'tech-founder' })
+  router.push({ name: 'campaign' })
 }
 </script>
 
@@ -352,8 +362,9 @@ const handleLaunch = () => {
                     :class="{ 'import-selected': selectedImport === method.key }"
                     @click="method.key === 'lead' ? (isLookalikesModalOpen = true) : (selectedImport = method.key)"
                   >
-                    <div class="import-icon-wrap ">
-                      <VIcon :icon="method.icon" size="22" :color="selectedImport === method.key ? 'rgb(10, 102, 194)' : '#5E5873'" />
+                    <div class="import-icon-wrap" :style="{ backgroundColor: method.bg }">
+                      <component :is="method.icon" v-if="typeof method.icon !== 'string'" />
+                      <VIcon v-else :icon="method.icon" size="22" :color="selectedImport === method.key ? 'rgb(10, 102, 194)' : '#5E5873'" />
                     </div>
                     <div class="import-title font-weight-semibold mb-1">{{ method.title }}</div>
                     <div class="import-description text-caption text-medium-emphasis">
@@ -469,19 +480,19 @@ const handleLaunch = () => {
                   @drop.prevent="handleFileDrop"
                   @click="triggerFileInput"
                 >
-                  <VIcon icon="tabler-upload" size="32" color="primary" class="mb-3" />
+                  <VIcon icon="tabler-upload" size="42" color="#3666EE" class="mb-4" />
                   <div v-if="!csvFile">
-                    <span class="text-primary font-weight-medium" style="cursor:pointer">Drag a File or click a browse</span>
-                    <p class="text-caption text-medium-emphasis mt-1 mb-0">File with up to 100 rows works best</p>
+                    <span class="text-h6 font-weight-medium" style="color: #3666EE; cursor:pointer">Drag a File or click a browse</span>
+                    <p class="text-caption text-medium-emphasis mt-2 mb-0">File with up to 100 rows works best</p>
                   </div>
                   <div v-else>
-                    <span class="text-primary font-weight-medium">{{ csvFile.name }}</span>
+                    <span class="font-weight-medium" style="color: #3666EE">{{ csvFile.name }}</span>
                     <p class="text-caption text-medium-emphasis mt-1 mb-0">{{ (csvFile.size / 1024).toFixed(1) }} KB</p>
                   </div>
                 </div>
                 <div class="d-flex align-center gap-2 mt-3">
-                  <VIcon icon="tabler-download" size="15" color="primary" />
-                  <a href="#" class="text-caption text-primary download-sample-link">Download a sample file</a>
+                  <VIcon icon="tabler-download" size="18" color="#3666EE" />
+                  <a href="#" class="text-caption download-sample-link" style="color: #3666EE">Download a sample file</a>
                 </div>
               </div>
 
@@ -501,39 +512,63 @@ const handleLaunch = () => {
                     </VBtn>
                   </div>
                   <VDivider class="mb-4" />
-                  <div class="map-columns">
-                    <div class="map-col">
-                      <p class="text-caption font-weight-semibold text-medium-emphasis mb-3 text-uppercase" style="letter-spacing:0.5px">Contact Field</p>
-                      <div class="d-flex flex-column gap-2">
-                        <div v-for="field in contactFields" :key="field.label" class="map-field-chip">
-                          <VIcon icon="tabler-layout-list" size="15" color="success" class="me-2" />
-                          <span class="text-body-2">{{ field.label }}</span>
+                  <div class="map-layout d-flex gap-8">
+                    <!-- Left: Main Mapping Area -->
+                    <div class="map-main-area flex-grow-1">
+                      <div class="d-flex gap-6">
+                        <div class="mapping-col flex-grow-1">
+                          <p class="section-title text-caption font-weight-bold text-medium-emphasis text-uppercase mb-4">Contact Field</p>
+                          <div class="d-flex flex-column gap-3">
+                            <div v-for="field in contactFields" :key="field.label" class="map-item-card">
+                              <div class="field-icon-box success-light me-3">
+                                <component :is="field.icon" v-if="typeof field.icon !== 'string'" />
+                                <VIcon v-else :icon="field.icon" size="18" color="success" />
+                              </div>
+                              <span class="text-body-2 font-weight-medium">{{ field.label }}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="mapping-col flex-grow-1">
+                          <p class="section-title text-caption font-weight-bold text-medium-emphasis text-uppercase mb-4">CSV Column</p>
+                          <div class="d-flex flex-column gap-3">
+                            <div v-for="col in csvColumns" :key="col.label" class="map-item-card map-item-card--csv">
+                              <div class="field-icon-box me-3">
+                                <component :is="col.icon" v-if="typeof col.icon !== 'string'" />
+                                <VIcon v-else :icon="col.icon" size="18" color="secondary" />
+                              </div>
+                              <span class="text-body-2 font-weight-medium flex-grow-1">{{ col.label }}</span>
+                              <span class="text-caption text-medium-emphasis">({{ col.count }})</span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
-                    <div class="map-col">
-                      <p class="text-caption font-weight-semibold text-medium-emphasis mb-3 text-uppercase" style="letter-spacing:0.5px">CSV Column</p>
-                      <div class="d-flex flex-column gap-2">
-                        <div v-for="col in csvColumns" :key="col.label" class="map-field-chip map-field-chip--csv">
-                          <VIcon :icon="col.icon" size="15" class="me-2 text-medium-emphasis" />
-                          <span class="text-body-2 flex-grow-1">{{ col.label }}</span>
-                          <span class="map-count">({{ col.count }})</span>
+
+                    <!-- Right: Unmapped Works Sidebar -->
+                    <div class="map-sidebar-area" style="width: 320px;">
+                      <VCard variant="outlined" rounded="lg" class="pa-4 sidebar-inner-card border-light">
+                        <p class="text-caption font-weight-bold text-medium-emphasis text-uppercase mb-4">Unmapped Works</p>
+                        <VTextField
+                          v-model="mapSearch"
+                          placeholder="Search"
+                          prepend-inner-icon="tabler-search"
+                          variant="outlined"
+                          density="compact"
+                          hide-details
+                          class="mb-4 search-input-compact"
+                        />
+                        <div class="d-flex flex-column gap-3">
+                          <div v-for="item in filteredUnmapped" :key="item.label" class="unmapped-item">
+                            <unmappedworkicon class="me-2" />
+                            <span class="text-body-2 flex-grow-1">{{ item.label }} ({{ item.total }})</span>
+                            <span class="text-caption text-medium-emphasis">({{ item.count }})</span>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                    <div class="map-col map-col--unmapped">
-                      <p class="text-caption font-weight-semibold text-medium-emphasis mb-3 text-uppercase" style="letter-spacing:0.5px">Unmapped Works</p>
-                      <VTextField v-model="mapSearch" placeholder="Search" prepend-inner-icon="tabler-search" variant="outlined" density="compact" hide-details class="mb-3 map-search" />
-                      <div class="d-flex flex-column gap-2">
-                        <div v-for="item in filteredUnmapped" :key="item.label" class="map-unmapped-row">
-                          <VIcon icon="tabler-list-details" size="14" class="me-2 text-medium-emphasis" />
-                          <span class="text-body-2 flex-grow-1">{{ item.label }} ({{ item.total }})</span>
-                          <span class="map-count">({{ item.count }})</span>
+                        <div class="mt-4 text-right">
+                          <a href="#" class="text-caption text-primary font-weight-medium text-decoration-none" @click.prevent>Clear All Matched</a>
                         </div>
-                      </div>
-                      <div class="d-flex justify-end mt-3">
-                        <a href="#" class="text-caption text-primary" style="text-decoration:none; font-weight:500">Clear All Matched</a>
-                      </div>
+                      </VCard>
                     </div>
                   </div>
                 </VCard>
@@ -610,7 +645,7 @@ const handleLaunch = () => {
         <div class="pa-6 d-flex align-center justify-space-between flex-wrap gap-4">
           <div class="d-flex align-center gap-3">
             <div class="linkedin-square-icon">
-              <VIcon icon="tabler-brand-linkedin" color="white" size="20" />
+              <linkedinprofileicon />
             </div>
             <div>
               <h3 class="text-h6 font-weight-bold mb-0">LinkedIn Profile</h3>
@@ -690,9 +725,9 @@ const handleLaunch = () => {
                   :rotate="360"
                   :size="42"
                   :width="4"
-                  color="orange"
+                  color="#FF9F43"
                 >
-                  <span class="text-caption font-weight-bold">{{ account.health }}</span>
+                  <span class="text-caption font-weight-bold" style="color: #FF9F43">{{ account.health }}</span>
                 </v-progress-circular>
               </div>
             </div>
@@ -707,7 +742,7 @@ const handleLaunch = () => {
             <!-- Type -->
             <div class="col-type d-flex align-center gap-2">
               <div class="type-icon">
-                <VIcon icon="tabler-brand-linkedin" color="#FDB528" size="18" />
+                <linkedinprofileicon color="#FF9F43" />
               </div>
               <span class="text-body-2 text-medium-emphasis">{{ account.type }}</span>
             </div>
@@ -747,20 +782,24 @@ const handleLaunch = () => {
         <div class="d-flex flex-wrap gap-6 mb-8 settings-two-col">
           <!-- Left: Sending Window -->
           <div class="settings-col flex-grow-1">
-            <label class="text-h6 font-weight-bold d-block mb-1">Sending Window</label>
-            <p class="text-caption text-medium-emphasis mb-4">Define when the campaign runs</p>
+            <h3 class="text-h6 font-weight-bold mb-1" style="color: #373742; font-size: 18px !important;">Sending Window</h3>
+            <p class="text-caption text-medium-emphasis mb-5" style="font-size: 13px;">Define when the campaign runs</p>
             
-            <VCard variant="outlined" rounded="lg" class="pa-5 sending-window-box">
+            <VCard variant="outlined" rounded="lg" class="pa-5 sending-window-box h-100" elevation="0" style="border-color: rgba(var(--v-theme-on-surface), 0.12) !important;">
               <VSelect
                 v-model="selectedSchedule"
                 :items="['USA Outreach Time']"
                 variant="outlined"
                 density="compact"
                 hide-details
-                class="mb-4"
-              />
+                class="mb-5 compact-input"
+              >
+                <template #append-inner>
+                  <VIcon icon="tabler-chevron-down" size="20" color="medium-emphasis" />
+                </template>
+              </VSelect>
 
-              <div class="d-flex align-center gap-2 mb-4 flex-wrap">
+              <div class="d-flex align-center gap-2 mb-5 flex-wrap">
                 <div 
                   v-for="day in availableDays" 
                   :key="day"
@@ -770,9 +809,9 @@ const handleLaunch = () => {
                 >
                   {{ day }}
                 </div>
-                <VBtn icon variant="text" size="small" color="secondary" class="ms-auto">
+                <div class="trash-btn-box ms-auto">
                   <VIcon icon="tabler-trash" size="18" />
-                </VBtn>
+                </div>
               </div>
 
               <div class="d-flex gap-3 mb-6">
@@ -783,7 +822,7 @@ const handleLaunch = () => {
                   hide-details
                   prepend-inner-icon="tabler-clock"
                   readonly
-                  class="flex-grow-1"
+                  class="flex-grow-1 compact-input"
                 />
                 <VTextField
                   v-model="timezone"
@@ -791,61 +830,59 @@ const handleLaunch = () => {
                   density="compact"
                   hide-details
                   readonly
-                  class="flex-grow-1"
+                  class="flex-grow-1 compact-input"
                 />
               </div>
 
-              <VBtn 
-                variant="text" 
-                color="primary" 
-                class="text-none px-0" 
-                prepend-icon="tabler-plus"
-              >
-                Add New Window
-              </VBtn>
+              <div class="d-flex align-center gap-1 cursor-pointer add-window-link">
+                <VIcon icon="tabler-plus" size="18" />
+                <span>Add New Window</span>
+              </div>
             </VCard>
           </div>
 
           <!-- Right: AI Assist -->
-          <div class="settings-col flex-grow-1">
-            <VCard variant="outlined" rounded="lg" class="pa-5 ai-assist-card h-100">
-              <div class="d-flex align-center justify-space-between mb-1">
+          <div class="settings-col flex-grow-1" style="padding-top: 52px;">
+            <VCard variant="outlined" rounded="lg" class="pa-5 ai-assist-card h-100" elevation="0" style="border-color: rgba(var(--v-theme-on-surface), 0.12) !important;">
+              <div class="d-flex align-center justify-space-between mb-0">
                 <div class="d-flex align-center gap-2">
                   <div class="ai-icon-wrap">
-                    <VIcon icon="tabler-robot" size="18" color="white" />
+                    <aiassisticon />
                   </div>
-                  <span class="text-h6 font-weight-bold" >AI Assist</span>
-                  <span class="text-caption text-medium-emphasis ms-1">Optional</span>
+                  <span class="font-weight-bold" style="font-size: 17px; color: #373742;">AI Assist</span>
+                  <span class="text-caption text-medium-emphasis ms-0" style="font-size: 14px;">Optional</span>
                 </div>
-                <VBtn color="primary" class="text-none px-6" rounded="md">Train AI</VBtn>
+                <VBtn color="#3666EE" class="text-none px-6" rounded="lg" elevation="0" style="height: 36px; font-weight: 500; font-size: 13px;">Train AI</VBtn>
               </div>
-              <p class="text-caption text-medium-emphasis mb-6 ms-10">Define when the campaign runs</p>
+              <p class="text-caption text-medium-emphasis mb-4" style="margin-left: 38px; font-size: 13px;">Define when the campaign runs</p>
+
+              <VDivider class="mb-5" style="opacity: 0.08;" />
 
               <!-- AI Toggles -->
-              <div class="d-flex flex-column gap-6 ps-2">
+              <div class="d-flex flex-column gap-6 ps-1">
                 <div class="d-flex align-start gap-3">
-                  <VIcon icon="tabler-messages" size="20" class="mt-1 text-primary" />
+                  <VIcon icon="tabler-message-2" size="22" class="mt-1" color="#3666EE" />
                   <div class="flex-grow-1">
                     <div class="d-flex align-center justify-space-between">
-                      <span class="font-weight-bold">Auto message after reply detected</span>
-                      <VSwitch v-model="aiAutoMessage" hide-details density="compact" color="primary" />
+                      <span class="font-weight-medium" style="font-size: 15px; color: #373742;">Auto message after reply detected</span>
+                      <VSwitch v-model="aiAutoMessage" hide-details density="compact" color="#3666EE" class="mt-0" />
                     </div>
-                    <p class="text-caption text-medium-emphasis mb-0 mt-1">AI auto-replies to leads who message you back</p>
+                    <p class="text-caption text-medium-emphasis mb-0 mt-1" style="font-size: 12px;">AI auto-replies to leads who message you back</p>
                   </div>
                 </div>
 
                 <div class="d-flex align-start gap-3">
-                  <VIcon icon="tabler-arrow-forward-up" size="20" class="mt-1 text-primary" />
+                  <VIcon icon="tabler-arrow-forward-up" size="22" class="mt-1" color="#3666EE" />
                   <div class="flex-grow-1">
                     <div class="d-flex align-center justify-space-between">
                       <div class="d-flex align-center gap-1">
-                        <span class="font-weight-bold">Auto handle leads after</span>
+                        <span class="font-weight-medium" style="font-size: 15px; color: #373742;">Auto handle leads after</span>
                         <div class="followup-count-input">{{ aiFollowupsCount }}</div>
-                        <span class="font-weight-bold">Follow-ups</span>
+                        <span class="font-weight-medium" style="font-size: 15px; color: #373742;">Follow-ups</span>
                       </div>
-                      <VSwitch v-model="aiAutoHandle" hide-details density="compact" color="primary" />
+                      <VSwitch v-model="aiAutoHandle" hide-details density="compact" color="#3666EE" class="mt-0" />
                     </div>
-                    <p class="text-caption text-medium-emphasis mb-0 mt-1">AI takes over after two follow-ups.</p>
+                    <p class="text-caption text-medium-emphasis mb-0 mt-1" style="font-size: 12px;">AI takes over after two follow-ups.</p>
                   </div>
                 </div>
               </div>
@@ -882,12 +919,14 @@ const handleLaunch = () => {
             <div class="pa-4 px-6 d-flex align-center gap-4">
               <span class="text-caption text-medium-emphasis">Works With</span>
               <div class="d-flex align-center gap-3">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Zapier_logo.svg" height="14" alt="Zapier" />
+                <zapiericon />
                 <div style="width:1px; height:12px; background:rgba(var(--v-theme-on-surface), 0.15)" />
-                <span class="font-weight-bold" style="font-size: 11px;">n8n</span>
+                <n8nicon />
                 <div style="width:1px; height:12px; background:rgba(var(--v-theme-on-surface), 0.15)" />
-                <VIcon icon="tabler-webhook" size="14" class="me-1" />
-                <span class="font-weight-semibold" style="font-size: 11px;">webhooks</span>
+                <div class="d-flex align-center gap-1">
+                  <inboundwebhook />
+                  <span class="font-weight-semibold" style="font-size: 11px;">webhooks</span>
+                </div>
               </div>
             </div>
           </VCard>
@@ -903,48 +942,60 @@ const handleLaunch = () => {
     <!-- ── STEP 4: Stats ── -->
     <div v-show="currentStep === 3">
       <div class="stats-empty-state d-flex flex-column align-center justify-center py-16">
-        <img 
-          src="C:\Users\DELL\.gemini\antigravity\brain\36b7d573-457e-4529-b7e6-c794530b1661\stats_empty_state_illustration_1774352672325.png" 
-          alt="No Stats"
-          class="stats-img mb-6"
-        />
-        <h2 class="text-h4 font-weight-bold mb-2">No Stats Yet</h2>
-        <p class="text-body-1 text-medium-emphasis mb-8">Once Campaign is launched, Statistics will be shown here.</p>
+        <div class="mb-4">
+          <Nostatsicon />
+        </div>
+        <h2 class="font-weight-bold mb-2" style="color: #373742; font-size: 28px !important;">No Stats Yet</h2>
+        <p class="text-body-1 text-medium-emphasis mb-10">Once Campaign is launched, Statistics will be shown here.</p>
         
         <VBtn
-          class="primary-gradient-btn text-none px-12"
-          rounded="md"
+          variant="flat"
+          class="text-none px-10"
+          rounded="lg"
           size="large"
-          prepend-icon="tabler-rocket"
-          style="height: 54px; font-size: 1.1rem; box-shadow: 0 8px 20px rgba(115, 103, 240, 0.4) !important;"
+          color="#3666EE"
+          style="color: white; height: 44px; font-weight: 500; font-size: 15px;"
           @click="handleLaunch"
         >
-          Launch Campaign
+          <div class="d-flex align-center gap-2">
+            <launchcompaignicon />
+            <span>Launch Campaign</span>
+          </div>
         </VBtn>
       </div>
     </div>
 
     <!-- Footer Actions -->
-    <div class="footer-action-bar">
-      <VBtn
-        variant="outlined"
-        rounded="md"
-        class="text-none px-8"
-        color="secondary"
-        size="large"
-        @click="currentStep--"
-      >
-        Previous
-      </VBtn>
-      <VBtn
-        v-if="currentStep < 3"
-        class="primary-gradient-btn text-none px-12"
-        rounded="md"
-        size="large"
-        @click="currentStep++"
-      >
-        Next
-      </VBtn>
+    <div v-if="currentStep !== 3" class="footer-action-bar mt-auto pa-4 px-6 d-flex align-center justify-space-between border-t" style="background: #fff; height: 80px;">
+      <div class="text-caption text-medium-emphasis mb-0" style="max-width: 420px; font-size: 13px !important; line-height: 1.4;">
+        If a lead answers your invite, message, or InMail, we
+        stop sending further steps automatically. <a href="#" class="text-decoration-none" style="color: #3666EE;">Learn more</a>
+      </div>
+
+      <div class="d-flex align-center gap-6">
+        <VBtn
+          variant="text"
+          class="text-none px-2"
+          style="color: #3666EE; font-weight: 500; font-size: 14px;"
+          @click="currentStep > 0 ? currentStep-- : router.push({ name: 'campaign' })"
+        >
+          <div class="d-flex align-center gap-2">
+            <previousbuttonicon />
+            <span>Previous</span>
+          </div>
+        </VBtn>
+        <VBtn
+          v-if="currentStep < 3"
+          class="text-none px-10"
+          rounded="lg"
+          color="#3666EE"
+          elevation="0"
+          style="color: white; font-weight: 500; font-size: 14px; height: 38px;"
+          @click="currentStep++"
+        >
+          Next
+        </VBtn>
+      </div>
     </div>
   </div>
 </template>
@@ -1092,9 +1143,9 @@ const handleLaunch = () => {
 }
 
 .import-option-card.import-selected {
-  border-color: #3762EE;
-  background-color: rgba(55, 98, 238, 0.03);
-  box-shadow: 0 4px 16px rgba(55, 98, 238, 0.12);
+  border-color: #3666EE;
+  background-color: rgba(54, 102, 238, 0.04);
+  box-shadow: 0 4px 16px rgba(54, 102, 238, 0.12);
 }
 
 .import-icon-wrap {
@@ -1125,7 +1176,7 @@ const handleLaunch = () => {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: linear-gradient(180deg, #8BA6FF 0%, #3762EE 100%);
+  background-color: #3666EE;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1144,16 +1195,16 @@ const handleLaunch = () => {
 
 /* ───── Next Button ───── */
 .primary-gradient-btn {
-  background: linear-gradient(180deg, #8BA6FF 0%, #3762EE 100%) !important;
+  background: #3666EE !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 14px rgba(55, 98, 238, 0.3) !important;
+  box-shadow: 0 4px 14px rgba(54, 102, 238, 0.3) !important;
   border: none !important;
   transition: all 0.3s ease;
 }
 
 .primary-gradient-btn:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(55, 98, 238, 0.45) !important;
+  box-shadow: 0 6px 18px rgba(54, 102, 238, 0.45) !important;
 }
 
 .primary-gradient-btn:disabled {
@@ -1199,7 +1250,7 @@ const handleLaunch = () => {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: #3762EE;
+  background-color: #3666EE;
   flex-shrink: 0;
 }
 
@@ -1207,9 +1258,9 @@ const handleLaunch = () => {
 .step-badge {
   font-size: 0.72rem;
   font-weight: 500;
-  color: #3762EE;
-  background-color: rgba(55, 98, 238, 0.08);
-  border: 1px solid rgba(55, 98, 238, 0.2);
+  color: #3666EE;
+  background-color: rgba(54, 102, 238, 0.08);
+  border: 1px solid rgba(54, 102, 238, 0.2);
   border-radius: 20px;
   padding: 2px 10px;
   white-space: nowrap;
@@ -1217,9 +1268,9 @@ const handleLaunch = () => {
 
 /* ───── CSV Drop Zone ───── */
 .csv-dropzone {
-  border: 2px dashed rgba(55, 98, 238, 0.35);
+  border: 2px dashed rgba(54, 102, 238, 0.35);
   border-radius: 10px;
-  background-color: rgba(55, 98, 238, 0.02);
+  background-color: rgba(54, 102, 238, 0.02);
   padding: 40px 24px;
   display: flex;
   flex-direction: column;
@@ -1233,8 +1284,8 @@ const handleLaunch = () => {
 
 .csv-dropzone:hover,
 .csv-dropzone-active {
-  border-color: #3762EE;
-  background-color: rgba(55, 98, 238, 0.05);
+  border-color: #3666EE;
+  background-color: rgba(54, 102, 238, 0.05);
 }
 
 .csv-dropzone-filled {
@@ -1330,7 +1381,6 @@ const handleLaunch = () => {
   margin-top: 4px;
   background: rgba(var(--v-theme-on-surface), 0.1);
   border-radius: 2px;
-  height:215px;
 }
 
 /* ───── Green completed dot ───── */
@@ -1346,68 +1396,68 @@ const handleLaunch = () => {
   box-shadow: 0 0 0 3px rgba(40, 199, 111, 0.18);
 }
 
-/* ───── Map Properties ───── */
+/* ───── Map Properties View ───── */
 .map-card {
-  border: 1px solid rgba(var(--v-theme-on-surface), 0.08) !important;
-  background-color: rgb(var(--v-theme-surface)) !important;
+  border: none !important;
+  background-color: transparent !important;
 }
 
-.map-columns {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 16px;
-  align-items: start;
-}
-
-@media (max-width: 768px) {
-  .map-columns {
-    grid-template-columns: 1fr;
-  }
-}
-
-.map-col--unmapped {
-  border-left: 1px solid rgba(var(--v-theme-on-surface), 0.08);
-  padding-left: 16px;
-}
-
-.map-field-chip {
+.map-item-card {
   display: flex;
   align-items: center;
-  padding: 8px 12px;
-  border: 1px solid rgba(var(--v-theme-on-surface), 0.1);
-  border-radius: 6px;
+  padding: 10px 16px;
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.08);
+  border-radius: 8px;
   background-color: rgb(var(--v-theme-surface));
-  font-size: 0.875rem;
-  transition: border-color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
-.map-field-chip:hover {
-  border-color: rgba(55, 98, 238, 0.3);
+.map-item-card:hover {
+  border-color: #3666EE40;
+  box-shadow: 0 2px 8px rgba(54, 102, 238, 0.05);
 }
 
-.map-field-chip--csv {
+.map-item-card--csv {
   background-color: rgba(var(--v-theme-on-surface), 0.01);
 }
 
-.map-count {
-  font-size: 0.78rem;
-  color: rgba(var(--v-theme-on-surface), 0.4);
-  margin-left: 4px;
-  white-space: nowrap;
-}
-
-.map-unmapped-row {
+.field-icon-box {
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
-  padding: 8px 10px;
+  justify-content: center;
   border-radius: 6px;
   border: 1px solid rgba(var(--v-theme-on-surface), 0.08);
-  font-size: 0.875rem;
-  background-color: rgba(var(--v-theme-on-surface), 0.01);
+  flex-shrink: 0;
 }
 
-:deep(.map-search .v-field__outline) {
-  --v-field-border-opacity: 0.15;
+.field-icon-box.success-light {
+  background-color: rgba(40, 199, 111, 0.08);
+  border-color: rgba(40, 199, 111, 0.15);
+}
+
+.sidebar-inner-card {
+  height: 100%;
+  background-color: rgba(var(--v-theme-on-surface), 0.01) !important;
+}
+
+.border-light {
+  border-color: rgba(var(--v-theme-on-surface), 0.06) !important;
+}
+
+.search-input-compact :deep(.v-field__outline) {
+  --v-field-border-opacity: 0.12;
+}
+
+.unmapped-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.08);
+  border-radius: 8px;
+  background-color: rgb(var(--v-theme-surface));
+  font-size: 0.85rem;
 }
 
 /* ───── Lookalikes Dialog ───── */
@@ -1509,7 +1559,7 @@ const handleLaunch = () => {
 .linkedin-square-icon {
   width: 32px;
   height: 32px;
-  background-color: #0077B5;
+  background-color: transparent;
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -1598,26 +1648,52 @@ const handleLaunch = () => {
 }
 
 .day-toggle {
-  padding: 6px 12px;
-  border: 1px solid #7367F0;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #7367F0;
+  width: 44px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid rgba(var(--v-theme-on-surface), 0.12);
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: rgba(var(--v-theme-on-surface), 0.25);
   cursor: pointer;
   transition: all 0.2s;
   background-color: transparent;
+  user-select: none;
 }
 
 .day-toggle.day-active {
-  background-color: #7367F015;
-  background: #7367f01a;
-  color: #7367f0;
+  background-color: #E8EFFF;
+  border-color: #3666EE !important;
+  color: #3666EE;
 }
 
-.day-toggle:not(.day-active) {
-  border-color: rgba(var(--v-theme-on-surface), 0.2);
-  color: rgba(var(--v-theme-on-surface), 0.4);
+.trash-btn-box {
+  width: 34px;
+  height: 34px;
+  border: 1.5px solid rgba(var(--v-theme-on-surface), 0.12);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #71717A;
+}
+
+.trash-btn-box:hover {
+  background-color: rgba(var(--v-theme-on-surface), 0.05);
+}
+
+.compact-input :deep(.v-field__outline) {
+  --v-field-border-opacity: 0.12;
+}
+
+.add-window-link {
+  color: #3666EE;
+  font-size: 14px;
+  font-weight: 400;
 }
 
 .ai-assist-card {
@@ -1627,7 +1703,7 @@ const handleLaunch = () => {
 .ai-icon-wrap {
   width: 28px;
   height: 28px;
-  background: #7367F0;
+  background: transparent;
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -1635,16 +1711,17 @@ const handleLaunch = () => {
 }
 
 .followup-count-input {
-  width: 32px;
-  height: 32px;
-  border: 1px solid rgba(var(--v-theme-on-surface), 0.14);
+  width: 38px;
+  height: 28px;
+  border: 1px solid rgba(var(--v-theme-on-surface), 0.12);
   border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
-  color: rgba(var(--v-theme-on-surface), 0.7);
+  font-weight: 500;
+  color: #373742;
   margin: 0 4px;
+  font-size: 14px;
 }
 
 .zapier-main-card {
